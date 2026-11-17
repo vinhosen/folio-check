@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="window.__nox=1"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="window.__nopdf=1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" onerror="window.__noqr=1"></script>
 <style>
 :root{
   --bg:#F7F6F2;
@@ -882,6 +883,298 @@ dialog .r{display:flex;gap:8px;justify-content:flex-end}
   .pn{left:0;right:auto}
   button,.btn,summary.btn{min-height:38px}
 }
+/* Header Utility Buttons (History & Sync) */
+.hbtn{
+  height:32px;
+  padding:0 10px;
+  font-size:12.5px;
+  gap:6px;
+}
+.hcnt{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  font-size:11px;
+  padding:1px 5px;
+  border-radius:4px;
+  background:var(--s2);
+  color:var(--t2);
+  border:1px solid var(--bd);
+}
+.sdot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--t2);
+  opacity:.45;
+  flex:none;
+  transition:background-color .2s ease,opacity .2s ease;
+}
+#sync-btn[data-state="ok"] .sdot{background:var(--ok);opacity:1}
+#sync-btn[data-state="busy"] .sdot{background:var(--ac);opacity:1;animation:pulse 1s ease-in-out infinite}
+#sync-btn[data-state="err"] .sdot{background:var(--no);opacity:1}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* File History Section (De-boxed Hairline Ledger) */
+.hist-wrap{margin-top:28px}
+.hist-hd{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  padding-bottom:10px;
+  border-bottom:1px solid var(--bd);
+  margin-bottom:12px;
+}
+.hist-hd h2{
+  font-size:14px;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+.hist-hd-r{display:flex;align-items:center;gap:10px}
+.hist-cnt{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  font-size:11.5px;
+  color:var(--t2);
+}
+.btn-ghost{
+  height:26px;
+  padding:0 8px;
+  font-size:12px;
+  border-color:transparent;
+  background:transparent;
+  color:var(--t2);
+}
+.btn-ghost:hover{
+  background:var(--s2);
+  border-color:transparent;
+  color:var(--no);
+}
+.hist-list{
+  background:var(--sf);
+  border:1px solid var(--bd);
+  border-radius:10px;
+  overflow:hidden;
+}
+.hist-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px 14px;
+  border-bottom:1px solid var(--bd);
+  cursor:pointer;
+  transition:background-color .14s ease;
+}
+.hist-row:last-child{border-bottom:0}
+.hist-row:hover{background:var(--hv)}
+.hist-row.cur{background:var(--okb)}
+.hist-main{min-width:0;flex:1}
+.hist-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+.hist-ext{
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:600;
+  letter-spacing:.05em;
+  padding:1px 6px;
+  border-radius:4px;
+  background:var(--s2);
+  border:1px solid var(--bd);
+  color:var(--t2);
+  flex:none;
+}
+.hist-name{
+  font-weight:600;
+  font-size:13.5px;
+  color:var(--t1);
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.hist-cur{
+  font-family:var(--mono);
+  font-size:10.5px;
+  font-weight:600;
+  color:var(--ok);
+  padding:1px 6px;
+  border-radius:4px;
+  background:color-mix(in srgb, var(--ok) 10%, transparent);
+  border:1px solid var(--ok-bd);
+  flex:none;
+}
+.hist-meta{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 10px;
+  margin-top:4px;
+  font-size:12px;
+  color:var(--t2);
+}
+.hist-meta .mono{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  font-size:11.5px;
+}
+.rel-t{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  color:var(--t1);
+  font-weight:500;
+}
+.hist-act{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex:none;
+}
+.hist-stat{
+  font-family:var(--mono);
+  font-variant-numeric:tabular-nums;
+  font-size:12px;
+  font-weight:500;
+  color:var(--t2);
+  margin-right:4px;
+}
+.hist-stat.done{color:var(--ok)}
+.hist-del{
+  width:28px;
+  height:28px;
+  padding:0;
+  font-size:14px;
+  color:var(--t2);
+  border-color:transparent;
+  background:transparent;
+}
+.hist-del:hover{
+  color:var(--no);
+  background:color-mix(in srgb, var(--no) 8%, transparent);
+  border-color:transparent;
+}
+.hist-empty{
+  padding:28px 16px;
+  text-align:center;
+  color:var(--t2);
+  font-size:13.5px;
+}
+
+/* History & Sync Modals */
+dialog.dlg-lg{max-width:600px}
+dialog.dlg-md{max-width:470px}
+.dlg-hd{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding-bottom:12px;
+  margin-bottom:14px;
+  border-bottom:1px solid var(--bd);
+}
+.dlg-hd h3{margin:0}
+.dlg-x{
+  width:30px;
+  height:30px;
+  padding:0;
+  border-color:transparent;
+  background:transparent;
+  color:var(--t2);
+}
+.dlg-x:hover{background:var(--s2);color:var(--t1);border-color:transparent}
+.dlg-scroll{max-height:60vh;overflow:auto}
+.sync-sec{display:flex;flex-direction:column;gap:12px}
+.sync-inp{
+  width:100%;
+  height:36px;
+  padding:0 12px;
+  font-family:var(--mono);
+  font-size:12.5px;
+  border:1px solid var(--bd);
+  border-radius:7px;
+  background:var(--bg);
+  color:var(--t1);
+}
+.sync-inp:focus{background:var(--sf);border-color:var(--pr);outline:none}
+.sync-link{
+  color:var(--ac);
+  font-size:13px;
+  font-weight:500;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.sync-link:hover{text-decoration:underline}
+.sync-info{
+  padding:12px 14px;
+  background:var(--bg);
+  border:1px solid var(--bd);
+  border-radius:8px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-size:13px;
+}
+.sync-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.sync-btns{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.sync-btns .p{grid-column:1 / -1}
+#sync-disconnect:hover{
+  color:var(--no);
+  border-color:color-mix(in srgb, var(--no) 38%, var(--bd));
+  background:color-mix(in srgb, var(--no) 6%, transparent);
+}
+.qr-wrap{
+  margin-top:4px;
+  padding:16px;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--bg);
+  text-align:center;
+}
+.qr-frame{
+  display:inline-flex;
+  padding:12px;
+  background:#FFFFFF;
+  border:1px solid #E4E2DC;
+  border-radius:10px;
+  margin-bottom:12px;
+}
+.qr-frame svg{display:block;width:184px;height:184px}
+.qr-warn{
+  font-size:12px;
+  color:var(--t2);
+  margin-bottom:10px;
+  line-height:1.45;
+}
+.sync-err{
+  font-size:12.5px;
+  color:var(--no);
+  min-height:18px;
+}
+
+@media(max-width:640px){
+  .hbtn-tx{display:none}
+  .hbtn{padding:0 9px}
+  .hist-row{align-items:flex-start;flex-direction:column;gap:8px}
+  .hist-main{width:100%;max-width:100%}
+  .hist-act{width:100%;justify-content:space-between}
+}
+@media(max-width:440px){
+  .sync-btns{grid-template-columns:1fr}
+}
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
 }
@@ -896,6 +1189,15 @@ dialog .r{display:flex;gap:8px;justify-content:flex-end}
   <span class="hdoc" id="hdoc"></span>
   <span class="fl"></span>
   <span id="sv" class="dp" role="status" aria-live="polite"></span>
+  <button id="hist-btn" class="hbtn" type="button" aria-label="ประวัติไฟล์" title="ประวัติไฟล์ที่เคยใช้งาน">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+    <span class="hbtn-tx">ประวัติ</span>
+    <span id="hist-cnt" class="hcnt hide">0</span>
+  </button>
+  <button id="sync-btn" class="hbtn" type="button" data-state="off" aria-label="ซิงค์ข้ามอุปกรณ์" title="ซิงค์ข้ามอุปกรณ์ (GitHub Gist)">
+    <span class="sdot" aria-hidden="true"></span>
+    <span class="hbtn-tx" id="sync-lbl">ซิงค์</span>
+  </button>
   <button id="thm" class="ib" type="button" aria-label="สลับโหมดสว่าง/มืด" title="สลับโหมดสว่าง/มืด">
     <svg class="thm-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     <svg class="thm-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
@@ -916,6 +1218,16 @@ dialog .r{display:flex;gap:8px;justify-content:flex-end}
       <p class="dp drop-note">PDF ต้องมีข้อความที่เลือกได้ ไฟล์สแกนที่เป็นรูปภาพยังอ่านไม่ได้</p>
     </div>
     <div id="err" class="no" role="alert"></div>
+    <div id="hist-up" class="hist-wrap hide">
+      <div class="hist-hd">
+        <h2>ประวัติไฟล์ที่เคยใช้งาน</h2>
+        <div class="hist-hd-r">
+          <span class="hist-cnt" id="hist-up-cnt">0 ไฟล์</span>
+          <button type="button" id="hist-clr" class="btn-ghost">ล้างประวัติ</button>
+        </div>
+      </div>
+      <div id="hist-list" class="hist-list"></div>
+    </div>
   </section>
 
   <div id="app" class="hide">
@@ -1012,32 +1324,107 @@ dialog .r{display:flex;gap:8px;justify-content:flex-end}
   </div>
 </dialog>
 
+<dialog id="hdlg" class="dlg-lg" aria-labelledby="hdt">
+  <div class="dlg-hd">
+    <h3 id="hdt">ประวัติไฟล์ที่เคยใช้งาน</h3>
+    <button id="hx" class="dlg-x" type="button" aria-label="ปิด">✕</button>
+  </div>
+  <div class="dlg-scroll">
+    <div id="hist-modal-list" class="hist-list"></div>
+  </div>
+</dialog>
+
+<dialog id="sdlg" class="dlg-md" aria-labelledby="sdt">
+  <div class="dlg-hd">
+    <h3 id="sdt">ซิงค์ข้อมูลข้ามอุปกรณ์</h3>
+    <button id="sx" class="dlg-x" type="button" aria-label="ปิด">✕</button>
+  </div>
+  <div id="sync-setup" class="sync-sec">
+    <p style="margin:0;color:var(--t2);font-size:13.5px">เชื่อมต่อด้วย GitHub Gist ส่วนตัว (Private Gist) เพื่อซิงค์ประวัติและรายการที่เช็คระหว่างคอมพิวเตอร์กับโทรศัพท์ได้ทุกที่</p>
+    <div>
+      <a class="sync-link" href="https://github.com/settings/tokens/new?description=FolioCheck%20Sync&scopes=gist" target="_blank" rel="noopener noreferrer">1. สร้าง GitHub Token (เลือกสิทธิ์ gist ให้อัตโนมัติ) ↗</a>
+    </div>
+    <div>
+      <label for="sync-tok" class="dp" style="display:block;margin-bottom:6px">2. วาง Token ที่ได้จาก GitHub</label>
+      <input id="sync-tok" class="sync-inp" type="password" placeholder="ghp_xxxxxxxxxxxx หรือ github_pat_xxxx" autocomplete="off">
+    </div>
+    <details style="font-size:12.5px;color:var(--t2)">
+      <summary style="cursor:pointer">ตัวเลือกขั้นสูง: ระบุ Gist ID เอง (ถ้ามี)</summary>
+      <input id="sync-gid" class="sync-inp" type="text" placeholder="เว้นว่างไว้ ระบบจะค้นหา/สร้างให้อัตโนมัติ" style="margin-top:8px">
+    </details>
+    <div id="sync-err" class="sync-err" role="alert"></div>
+    <button id="sync-connect" class="p" type="button">เชื่อมต่อและซิงค์</button>
+  </div>
+
+  <div id="sync-connected" class="sync-sec hide">
+    <div class="sync-info">
+      <div class="sync-row">
+        <span>บัญชีที่เชื่อมต่อ</span>
+        <strong id="sync-user" style="font-family:var(--mono);font-size:12.5px">-</strong>
+      </div>
+      <div class="sync-row">
+        <span>Private Gist</span>
+        <span id="sync-gid-lbl" style="font-family:var(--mono);font-size:12px;color:var(--t2)">-</span>
+      </div>
+      <div class="sync-row">
+        <span>ซิงค์ล่าสุด</span>
+        <span id="sync-last" class="rel-t" style="font-size:12px">-</span>
+      </div>
+    </div>
+    <div id="sync-err2" class="sync-err" role="alert"></div>
+    <div class="sync-btns">
+      <button id="sync-now" class="p" type="button">ซิงค์ตอนนี้</button>
+      <button id="sync-qr-btn" type="button">QR เชื่อมต่อเครื่องอื่น</button>
+      <button id="sync-disconnect" type="button">ยกเลิกเชื่อมต่อ</button>
+    </div>
+    <div id="qr-box" class="qr-wrap hide">
+      <div class="qr-frame" id="qr-svg" aria-label="QR Code สำหรับเชื่อมต่ออุปกรณ์"></div>
+      <p class="qr-warn">ใช้กล้องโทรศัพท์สแกน QR นี้เพื่อเชื่อมต่อข้อมูลเดียวกันทันที<br>(ลิงก์มีสิทธิ์เข้าถึง Gist ส่วนตัว ใช้เฉพาะอุปกรณ์ของคุณเท่านั้น)</p>
+      <button id="sync-copy-link" type="button" style="width:100%">คัดลอกลิงก์เชื่อมต่อ</button>
+    </div>
+  </div>
+</dialog>
+
 <script>
 var RAW=[],HR=0,LC=[],S={},F="all",KEY="att:v2",LIM=500,SHOWN=500,HY=[],BUSY=0,TOK=0,SH={},CUR="",ST={},T="",U="",C=[],HN={},D=[];
+var FILE_ID="",FNAME="",FEXT="",HIST=[],DEL={},SYNC={token:"",gistId:"",user:"",lastSyncAt:0},HKEY="att:hist:v1",DKEY="att:del:v1",SKEY="att:sync:v1",MAX_HIST=15,SYNC_TM=null,SYNC_BUSY=0,LAST_PULL=0;
 var $=function(i){return document.getElementById(i)};
 function cell(x){return x==null?"":String(x).trim()}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function clone(o){return JSON.parse(JSON.stringify(o))}
 function stash(){if(CUR)ST[CUR]={h:HR,l:LC,s:S}}
 function stat(t,bad){var e=$("sv");e.textContent=t;e.className="dp"+(bad?" no":"")}
 function put(k,v){try{localStorage.setItem(k,JSON.stringify(v));stat("บันทึกอัตโนมัติแล้ว");return 1}
   catch(e){stat((e&&(e.name==="QuotaExceededError"||e.code===22)?"พื้นที่จัดเก็บเต็ม":"บันทึกไม่ได้")+" ผลที่ติ๊กจะหายเมื่อรีเฟรช ให้กดคัดลอกสรุปเก็บไว้",true);return 0}}
-function save(){stash();put(KEY+"s",{cur:CUR,st:ST})}
-function saveAll(){if(put(KEY,{sh:SH}))save()}
+function save(noSync){
+  stash();
+  put(KEY+"s",{cur:CUR,st:ST,fid:FILE_ID,fname:FNAME,fext:FEXT});
+  if(CUR&&FILE_ID&&Object.keys(SH).length){upsertHist();if(!noSync)scheduleSync()}
+}
+function saveAll(noSync){if(put(KEY,{sh:SH}))save(noSync)}
 function okData(d){return d&&d.sh&&typeof d.sh==="object"&&!Array.isArray(d.sh)&&Object.keys(d.sh).length&&Object.keys(d.sh).every(function(k){var a=d.sh[k];return Array.isArray(a)&&a.every(Array.isArray)})}
 function rj(k){var r=localStorage.getItem(k);return r?JSON.parse(r):null}
 function load(){try{var d=rj(KEY);if(!d)return;
   if(!okData(d)){stat("ข้อมูลที่บันทึกไว้เสียหาย จึงไม่ได้โหลด (ยังไม่ถูกลบ จนกว่าจะอัปโหลดไฟล์ใหม่)",true);return}
   var s=rj(KEY+"s")||d;SH=d.sh;CUR=(s&&typeof s.cur==="string"&&SH[s.cur])?s.cur:Object.keys(SH)[0];
-  ST=(s&&s.st&&typeof s.st==="object")?s.st:{};RAW=SH[CUR];var t=ST[CUR]||{};
+  ST=(s&&s.st&&typeof s.st==="object")?s.st:{};
+  FILE_ID=(s&&typeof s.fid==="string")?s.fid:"";
+  FNAME=(s&&typeof s.fname==="string")?s.fname:"";
+  FEXT=(s&&typeof s.fext==="string")?s.fext:"";
+  RAW=SH[CUR];var t=ST[CUR]||{};
   HR=Math.max(0,Math.min(+t.h||0,RAW.length-1));LC=Array.isArray(t.l)?t.l:[];S=(t.s&&typeof t.s==="object")?t.s:{}}
   catch(e){stat("อ่านข้อมูลที่บันทึกไว้ไม่ได้ (ข้อมูลเสียหาย)",true)}}
 function shopts(){var n=Object.keys(SH);$("shb").classList.toggle("hide",n.length<2);$("sh").innerHTML=n.map(function(x){return'<option value="'+esc(x)+'"'+(x===CUR?" selected":"")+'>'+esc(x)+" ("+SH[x].filter(function(r){return r.some(Boolean)}).length+" แถว)</option>"}).join("")}
-function setSheets(o){
+function setSheets(o,meta){
+  meta=meta||{};
   var n=Object.keys(o).filter(function(k){return o[k].some(function(r){return r.some(Boolean)})});
   if(!n.length)throw new Error("ไฟล์ว่าง ไม่พบข้อมูล");
   SH={};n.forEach(function(k){SH[k]=o[k]});ST={};CUR=n[0];RAW=SH[CUR];HR=autoHR();S={};LC=[];
+  FILE_ID=meta.id||("f_"+Date.now().toString(36)+"_"+Math.random().toString(36).slice(2,6));
   full();
-  if(!D.length){RAW=[];SH={};CUR="";throw new Error("ไม่พบแถวข้อมูลใต้หัวตาราง")}
+  if(!D.length){RAW=[];SH={};CUR="";FILE_ID="";throw new Error("ไม่พบแถวข้อมูลใต้หัวตาราง")}
+  FNAME=meta.name||T||CUR||"รายการตรวจสอบ";
+  FEXT=(meta.ext||(meta.name&&meta.name.indexOf(".")>-1?meta.name.split(".").pop():"")||"DATA").toUpperCase();
   saveAll();render();
 }
 function autoHR(){
@@ -1075,9 +1462,10 @@ function chips(){
 function render(){
   $("up").classList.toggle("hide",D.length>0||RAW.length>0);
   $("app").classList.toggle("hide",!RAW.length);
+  renderHist();
   if(!RAW.length)return;
-  $("title").textContent=T||"เช็คชื่อ / เช็ครายการ";
-  $("sub").textContent=U||"ติ๊กช่องหน้าแถวเพื่อตรวจสอบรายการ";$("hdoc").textContent=T||CUR||"";
+  $("title").textContent=T||FNAME||"เช็คชื่อ / เช็ครายการ";
+  $("sub").textContent=U||"ติ๊กช่องหน้าแถวเพื่อตรวจสอบรายการ";$("hdoc").textContent=T||FNAME||CUR||"";
   $("th").innerHTML="<tr><th class='c'>เช็ค</th><th>#</th><th>สถานะ</th>"+C.map(function(i){return'<th scope="col">'+esc(HN[i])+"</th>"}).join("")+"</tr>";
   var q=$("q").value.trim().toLowerCase(),h="",cnt=0;
   D.forEach(function(r,k){
@@ -1106,6 +1494,441 @@ function summary(){
   $("lu2").innerHTML=li(b)||'<span class="dp">เช็คครบทุกรายการแล้ว</span>';
 }
 function full(){SHOWN=LIM;build();if(!LC.length||LC.some(function(i){return C.indexOf(i)<0}))LC=autoLC();shopts();chips();render()}
+
+/* === Time Formatting & File History === */
+function fmtRel(ts,now){
+  if(!ts)return"-";
+  var diff=Math.max(0,Math.floor(((now||Date.now())-ts)/1000));
+  if(diff<3600){
+    var m=Math.floor(diff/60),s=diff%60;
+    return m+" นาที "+s+" วินาทีที่แล้ว";
+  }
+  if(diff<86400){
+    var h=Math.floor(diff/3600),m2=Math.floor((diff%3600)/60);
+    return h+" ชั่วโมง "+m2+" นาทีที่แล้ว";
+  }
+  var d=Math.floor(diff/86400),h2=Math.floor((diff%86400)/3600);
+  return d+" วัน "+h2+" ชั่วโมงที่แล้ว";
+}
+function fmtAbs(ts){
+  if(!ts)return"";
+  try{
+    return new Intl.DateTimeFormat("th-TH",{year:"numeric",month:"short",day:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(new Date(ts));
+  }catch(e){return new Date(ts).toLocaleString()}
+}
+function tickTimes(){
+  var now=Date.now();
+  document.querySelectorAll(".rel-t[data-ts]").forEach(function(el){
+    var ts=+el.dataset.ts;if(ts)el.textContent=fmtRel(ts,now);
+  });
+}
+setInterval(tickTimes,1000);
+
+function histMetrics(it){
+  var raw=(it.sh&&it.sh[it.cur])||(it.sh&&it.sh[Object.keys(it.sh)[0]])||[];
+  var st0=(it.st&&it.st[it.cur])||{};
+  var hr0=Math.max(0,Math.min(+st0.h||0,Math.max(0,raw.length-1)));
+  var rows=raw.slice(hr0+1).filter(function(r){return r.some(cell)});
+  var tot=rows.length,chk=0,s0=st0.s||{};
+  for(var i=0;i<tot;i++)if(s0[i])chk++;
+  return{tot:tot,chk:chk,pct:tot?Math.round(chk*100/tot):0};
+}
+function saveHistStore(){
+  var list=HIST.slice(0,MAX_HIST);
+  while(list.length){
+    try{localStorage.setItem(HKEY,JSON.stringify(list));HIST=list;break}
+    catch(e){list.pop()}
+  }
+  if(!list.length)try{localStorage.setItem(HKEY,"[]");HIST=[]}catch(e){}
+  try{localStorage.setItem(DKEY,JSON.stringify(DEL))}catch(e){}
+}
+function loadHist(){
+  try{
+    var h=rj(HKEY);if(Array.isArray(h))HIST=h.filter(function(x){return x&&x.id&&okData(x)});
+    var d=rj(DKEY);if(d&&typeof d==="object"&&!Array.isArray(d))DEL=d;
+  }catch(e){}
+}
+function upsertHist(){
+  if(!FILE_ID||!CUR||!Object.keys(SH).length)return;
+  var now=Date.now(),idx=-1;
+  for(var i=0;i<HIST.length;i++)if(HIST[i].id===FILE_ID){idx=i;break}
+  var prev=idx>-1?HIST[idx]:null;
+  var item={
+    id:FILE_ID,
+    name:FNAME||T||CUR||"รายการตรวจสอบ",
+    ext:FEXT||"DATA",
+    openedAt:prev?prev.openedAt:now,
+    updatedAt:now,
+    cur:CUR,
+    sh:SH,
+    st:clone(ST)
+  };
+  if(idx>-1)HIST.splice(idx,1);
+  HIST.unshift(item);
+  if(HIST.length>MAX_HIST)HIST.length=MAX_HIST;
+  delete DEL[FILE_ID];
+  saveHistStore();
+}
+function histHtml(){
+  if(!HIST.length)return'<div class="hist-empty">ยังไม่มีประวัติไฟล์ที่เคยใช้งาน</div>';
+  var now=Date.now();
+  return HIST.map(function(it){
+    var m=histMetrics(it),isCur=!!(RAW.length&&it.id===FILE_ID),scnt=Object.keys(it.sh||{}).length;
+    var subInfo=(scnt>1?esc(it.cur)+" · ":"")+fmtAbs(it.updatedAt);
+    return'<div class="hist-row'+(isCur?" cur":"")+'" data-hid="'+esc(it.id)+'" tabindex="0" role="button" aria-label="เปิด '+esc(it.name)+'">'+
+      '<div class="hist-main">'+
+        '<div class="hist-top">'+
+          '<span class="hist-ext">'+esc(it.ext||"FILE")+'</span>'+
+          '<span class="hist-name">'+esc(it.name)+'</span>'+
+          (isCur?'<span class="hist-cur">กำลังเปิด</span>':"")+
+        '</div>'+
+        '<div class="hist-meta">'+
+          '<span class="mono">'+subInfo+'</span>'+
+          '<span>·</span>'+
+          '<span class="rel-t" data-ts="'+it.updatedAt+'">'+esc(fmtRel(it.updatedAt,now))+'</span>'+
+        '</div>'+
+      '</div>'+
+      '<div class="hist-act">'+
+        '<span class="hist-stat'+(m.tot&&m.chk===m.tot?" done":"")+'">'+m.chk+'/'+m.tot+' ('+m.pct+'%)</span>'+
+        '<button type="button" class="hist-del" data-hdel="'+esc(it.id)+'" aria-label="ลบ '+esc(it.name)+' ออกจากประวัติ" title="ลบออกจากประวัติ">✕</button>'+
+      '</div>'+
+    '</div>';
+  }).join("");
+}
+function renderHist(){
+  var n=HIST.length;
+  $("hist-cnt").textContent=n;
+  $("hist-cnt").classList.toggle("hide",!n);
+  $("hist-up").classList.toggle("hide",!n);
+  $("hist-up-cnt").textContent=n+" ไฟล์";
+  var html=histHtml();
+  $("hist-list").innerHTML=html;
+  $("hist-modal-list").innerHTML=html;
+}
+function openHist(id,silent){
+  var it=null;
+  for(var i=0;i<HIST.length;i++)if(HIST[i].id===id){it=HIST[i];break}
+  if(!it)return;
+  var rs=$("resume");if(rs)rs.remove();
+  FILE_ID=it.id;FNAME=it.name;FEXT=it.ext||"DATA";
+  SH=clone(it.sh);ST=clone(it.st||{});
+  CUR=(it.cur&&SH[it.cur])?it.cur:Object.keys(SH)[0];
+  RAW=SH[CUR]||[];
+  var t=ST[CUR]||{};
+  HR=Math.max(0,Math.min(+t.h||0,Math.max(0,RAW.length-1)));
+  LC=Array.isArray(t.l)?t.l:[];
+  S=(t.s&&typeof t.s==="object")?t.s:{};
+  F="all";$("q").value="";
+  document.querySelectorAll(".tabs button").forEach(function(x){x.classList.toggle("on",x.dataset.f==="all")});
+  full();
+  put(KEY,{sh:SH});
+  put(KEY+"s",{cur:CUR,st:ST,fid:FILE_ID,fname:FNAME,fext:FEXT});
+  if($("hdlg").open)$("hdlg").close();
+  if(!silent)say("เปิดไฟล์ "+it.name);
+}
+function delHist(id){
+  HIST=HIST.filter(function(x){return x.id!==id});
+  DEL[id]=Date.now();
+  saveHistStore();
+  renderHist();
+  scheduleSync();
+  say("ลบออกจากประวัติแล้ว");
+}
+function onHistClick(e){
+  var del=e.target.closest("[data-hdel]");
+  if(del){e.stopPropagation();delHist(del.dataset.hdel);return}
+  var row=e.target.closest("[data-hid]");
+  if(row)openHist(row.dataset.hid);
+}
+$("hist-list").addEventListener("click",onHistClick);
+$("hist-modal-list").addEventListener("click",onHistClick);
+[$("hist-list"),$("hist-modal-list")].forEach(function(el){
+  el.addEventListener("keydown",function(e){
+    if(e.key==="Enter"||e.key===" "){
+      var row=e.target.closest("[data-hid]");
+      if(row&&!e.target.closest("[data-hdel]")){e.preventDefault();openHist(row.dataset.hid)}
+    }
+  });
+});
+$("hist-btn").addEventListener("click",function(){renderHist();if($("hdlg").showModal)$("hdlg").showModal()});
+$("hx").addEventListener("click",function(){$("hdlg").close()});
+$("hist-clr").addEventListener("click",function(){
+  if(!HIST.length)return;
+  var now=Date.now();
+  HIST.forEach(function(x){DEL[x.id]=now});
+  HIST=[];saveHistStore();renderHist();scheduleSync();say("ล้างประวัติไฟล์ทั้งหมดแล้ว");
+});
+
+/* === Cross-Device Sync (GitHub Gist + QR Pairing) === */
+var GIST_FILE="foliocheck-sync.json";
+function loadSync(){
+  try{var s=rj(SKEY);if(s&&typeof s==="object"&&s.token)SYNC={token:s.token,gistId:s.gistId||"",user:s.user||"",lastSyncAt:+s.lastSyncAt||0}}catch(e){}
+  updateSyncUi();
+}
+function saveSync(){
+  try{localStorage.setItem(SKEY,JSON.stringify(SYNC))}catch(e){}
+  updateSyncUi();
+}
+function setSyncState(st,lbl){
+  var b=$("sync-btn");b.setAttribute("data-state",st);
+  $("sync-lbl").textContent=lbl||(st==="ok"?"ซิงค์แล้ว":st==="busy"?"กำลังซิงค์…":st==="err"?"ซิงค์ขัดข้อง":"ซิงค์");
+}
+function updateSyncUi(){
+  var on=!!(SYNC.token&&SYNC.gistId);
+  $("sync-setup").classList.toggle("hide",on);
+  $("sync-connected").classList.toggle("hide",!on);
+  if(on){
+    $("sync-user").textContent=SYNC.user?("@"+SYNC.user):"Connected";
+    $("sync-gid-lbl").textContent=SYNC.gistId.slice(0,10)+"…";
+    var sl=$("sync-last");
+    if(SYNC.lastSyncAt){sl.setAttribute("data-ts",SYNC.lastSyncAt);sl.textContent=fmtRel(SYNC.lastSyncAt)}
+    else{sl.removeAttribute("data-ts");sl.textContent="ยังไม่เคยซิงค์"}
+    if($("sync-btn").getAttribute("data-state")!=="busy")setSyncState("ok","ซิงค์แล้ว");
+  }else{
+    $("qr-box").classList.add("hide");
+    setSyncState("off","ซิงค์");
+  }
+}
+async function ghReq(path,opts){
+  opts=opts||{};
+  var h={"Accept":"application/vnd.github+json","Authorization":"Bearer "+SYNC.token,"X-GitHub-Api-Version":"2022-11-28"};
+  if(opts.body)h["Content-Type"]="application/json";
+  var res=await fetch("https://api.github.com"+path,{method:opts.method||"GET",headers:h,body:opts.body,cache:"no-store"});
+  if(!res.ok){
+    var msg="HTTP "+res.status;
+    try{var j=await res.json();if(j&&j.message)msg=j.message}catch(e){}
+    throw new Error(res.status===401?"Token ไม่ถูกต้องหรือหมดอายุ":res.status===404?"ไม่พบ Gist (อาจถูกลบหรือ Token ไม่มีสิทธิ์ gist)":msg);
+  }
+  return res.json();
+}
+function buildSyncPayload(){
+  return{v:1,updatedAt:Date.now(),activeId:FILE_ID||"",deleted:DEL,files:HIST.slice(0,MAX_HIST)};
+}
+function mergeRemote(remote){
+  if(!remote||typeof remote!=="object")return false;
+  var changed=false,needPush=false;
+  var rDel=(remote.deleted&&typeof remote.deleted==="object")?remote.deleted:{};
+  Object.keys(rDel).forEach(function(id){
+    if(!DEL[id]||rDel[id]>DEL[id]){DEL[id]=rDel[id];changed=true}
+  });
+  Object.keys(DEL).forEach(function(id){
+    if(!rDel[id]||DEL[id]>rDel[id])needPush=true;
+  });
+  var map={},localMap={};
+  HIST.forEach(function(it){if(it&&it.id){localMap[it.id]=it;map[it.id]=it}});
+  var rFiles=Array.isArray(remote.files)?remote.files:[];
+  rFiles.forEach(function(it){
+    if(!it||!it.id||!okData(it))return;
+    var dt=DEL[it.id]||0;
+    if(dt&&dt>=(it.updatedAt||0))return;
+    var loc=map[it.id];
+    if(!loc||(it.updatedAt||0)>(loc.updatedAt||0)){map[it.id]=it;changed=true}
+    else if((loc.updatedAt||0)>(it.updatedAt||0))needPush=true;
+  });
+  Object.keys(localMap).forEach(function(id){
+    var dt=DEL[id]||0;
+    if(dt&&dt>=(localMap[id].updatedAt||0)){delete map[id];changed=true;return}
+    var inRemote=rFiles.some(function(r){return r&&r.id===id});
+    if(!inRemote)needPush=true;
+  });
+  var merged=Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){return(b.updatedAt||0)-(a.updatedAt||0)}).slice(0,MAX_HIST);
+  HIST=merged;
+  saveHistStore();
+  // If active file was updated remotely, refresh workspace live
+  if(FILE_ID){
+    var dtCur=DEL[FILE_ID]||0;
+    if(dtCur&&dtCur>=(localMap[FILE_ID]?localMap[FILE_ID].updatedAt:0)){
+      SH={};ST={};CUR="";RAW=[];D=[];S={};LC=[];FILE_ID="";FNAME="";FEXT="";
+      put(KEY+"s",{cur:"",st:{},fid:"",fname:"",fext:""});render();
+    }else if(map[FILE_ID]&&(!localMap[FILE_ID]||(map[FILE_ID].updatedAt||0)>(localMap[FILE_ID].updatedAt||0))){
+      openHist(FILE_ID,true);
+      say("ซิงค์ข้อมูลล่าสุดจากอุปกรณ์อื่นแล้ว");
+    }
+  }
+  renderHist();
+  return{changed:changed,needPush:needPush,activeId:remote.activeId||""};
+}
+async function syncPull(quiet){
+  if(!SYNC.token||!SYNC.gistId||SYNC_BUSY)return null;
+  SYNC_BUSY=1;LAST_PULL=Date.now();
+  setSyncState("busy","กำลังซิงค์…");
+  $("sync-err2").textContent="";
+  try{
+    var g=await ghReq("/gists/"+encodeURIComponent(SYNC.gistId));
+    var f=g.files&&g.files[GIST_FILE];
+    var rawText="";
+    if(f){
+      if(f.truncated&&f.raw_url){rawText=await(await fetch(f.raw_url,{cache:"no-store"})).text()}
+      else rawText=f.content||"";
+    }
+    var remote=rawText?JSON.parse(rawText):{v:1,files:[],deleted:{}};
+    var res=mergeRemote(remote);
+    if(res&&res.needPush){await syncPushInternal()}
+    SYNC.lastSyncAt=Date.now();
+    saveSync();
+    setSyncState("ok","ซิงค์แล้ว");
+    if(!quiet&&res&&res.changed&&!FILE_ID)say("ซิงค์ข้อมูลล่าสุดแล้ว");
+    return res;
+  }catch(e){
+    setSyncState("err","ซิงค์ขัดข้อง");
+    $("sync-err2").textContent=e.message||"ซิงค์ไม่สำเร็จ";
+    if(!quiet)say("ซิงค์ไม่สำเร็จ: "+(e.message||"ตรวจอินเทอร์เน็ต"));
+    return null;
+  }finally{SYNC_BUSY=0}
+}
+async function syncPushInternal(){
+  var body=JSON.stringify({files:Object.defineProperty({},GIST_FILE,{value:{content:JSON.stringify(buildSyncPayload())},enumerable:true})});
+  await ghReq("/gists/"+encodeURIComponent(SYNC.gistId),{method:"PATCH",body:body});
+}
+async function syncPush(quiet){
+  if(!SYNC.token||!SYNC.gistId)return;
+  if(SYNC_BUSY){scheduleSync();return}
+  SYNC_BUSY=1;
+  setSyncState("busy","กำลังซิงค์…");
+  $("sync-err2").textContent="";
+  try{
+    await syncPushInternal();
+    SYNC.lastSyncAt=Date.now();
+    saveSync();
+    setSyncState("ok","ซิงค์แล้ว");
+  }catch(e){
+    setSyncState("err","ซิงค์ขัดข้อง");
+    $("sync-err2").textContent=e.message||"ส่งข้อมูลไม่สำเร็จ";
+    if(!quiet)say("ส่งข้อมูลซิงค์ไม่สำเร็จ");
+  }finally{SYNC_BUSY=0}
+}
+function scheduleSync(){
+  if(!SYNC.token||!SYNC.gistId)return;
+  clearTimeout(SYNC_TM);
+  SYNC_TM=setTimeout(function(){syncPush(true)},1200);
+}
+async function connectSync(token,optGistId){
+  $("sync-err").textContent="";
+  token=(token||"").trim();
+  optGistId=(optGistId||"").trim();
+  if(!token){$("sync-err").textContent="กรุณาวาง GitHub Token";return}
+  var btn=$("sync-connect");btn.disabled=true;btn.textContent="กำลังเชื่อมต่อ…";
+  SYNC.token=token;SYNC.gistId=optGistId;
+  try{
+    var u=await ghReq("/user");
+    SYNC.user=u.login||"";
+    if(!SYNC.gistId){
+      var list=await ghReq("/gists?per_page=100");
+      var found=null;
+      for(var i=0;i<list.length;i++){
+        if(list[i].files&&list[i].files[GIST_FILE]){found=list[i];break}
+      }
+      if(found){SYNC.gistId=found.id}
+      else{
+        var created=await ghReq("/gists",{
+          method:"POST",
+          body:JSON.stringify({
+            description:"FolioCheck Sync Data (Private)",
+            "public":false,
+            files:Object.defineProperty({},GIST_FILE,{value:{content:JSON.stringify(buildSyncPayload())},enumerable:true})
+          })
+        });
+        SYNC.gistId=created.id;
+      }
+    }
+    saveSync();
+    var res=await syncPull(true);
+    if(!RAW.length&&HIST.length){
+      var target=(res&&res.activeId&&HIST.some(function(x){return x.id===res.activeId}))?res.activeId:HIST[0].id;
+      openHist(target,true);
+    }
+    say("เชื่อมต่อซิงค์ @"+(SYNC.user||"GitHub")+" สำเร็จ");
+  }catch(e){
+    SYNC={token:"",gistId:"",user:"",lastSyncAt:0};
+    saveSync();
+    $("sync-err").textContent=e.message||"เชื่อมต่อไม่สำเร็จ";
+  }finally{
+    btn.disabled=false;btn.textContent="เชื่อมต่อและซิงค์";
+  }
+}
+function b64uEnc(str){
+  var b=new TextEncoder().encode(str),bin="";
+  for(var i=0;i<b.length;i++)bin+=String.fromCharCode(b[i]);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function b64uDec(str){
+  var s=str.replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  var bin=atob(s),b=new Uint8Array(bin.length);
+  for(var i=0;i<bin.length;i++)b[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(b);
+}
+function makePairUrl(){
+  return location.href.split("#")[0]+"#pair="+b64uEnc(JSON.stringify({t:SYNC.token,g:SYNC.gistId}));
+}
+function renderQrSvg(text){
+  if(typeof qrcode==="undefined")return'<div class="dp" style="padding:16px">โหลดตัวสร้าง QR ไม่สำเร็จ ใช้ปุ่มคัดลอกลิงก์ด้านล่างแทนได้</div>';
+  var qr=qrcode(0,"M");
+  qr.addData(text,"Byte");
+  qr.make();
+  var n=qr.getModuleCount(),m=4,sz=n+m*2,rects="";
+  for(var r=0;r<n;r++){
+    for(var c=0;c<n;c++){
+      if(qr.isDark(r,c))rects+='<rect x="'+(c+m)+'" y="'+(r+m)+'" width="1" height="1"/>';
+    }
+  }
+  return'<svg viewBox="0 0 '+sz+' '+sz+'" shape-rendering="crispEdges" role="img" aria-label="QR Code"><rect width="'+sz+'" height="'+sz+'" fill="#FFFFFF"/><g fill="#18181B">'+rects+'</g></svg>';
+}
+function checkPairHash(){
+  var h=location.hash||"";
+  if(h.indexOf("#pair=")!==0)return;
+  try{
+    var raw=h.slice(6);
+    if(history&&history.replaceState)history.replaceState(null,"",location.pathname+location.search);
+    else location.hash="";
+    var p=JSON.parse(b64uDec(raw));
+    if(!p||!p.t||!p.g)return;
+    SYNC={token:p.t,gistId:p.g,user:"",lastSyncAt:0};
+    saveSync();
+    (async function(){
+      try{var u=await ghReq("/user");SYNC.user=u.login||"";saveSync()}catch(e){}
+      var res=await syncPull(true);
+      if(!RAW.length&&HIST.length){
+        var target=(res&&res.activeId&&HIST.some(function(x){return x.id===res.activeId}))?res.activeId:HIST[0].id;
+        openHist(target,true);
+      }
+      say("เชื่อมต่อและซิงค์ข้อมูลข้ามอุปกรณ์สำเร็จ");
+    })();
+  }catch(e){}
+}
+
+$("sync-btn").addEventListener("click",function(){
+  updateSyncUi();
+  $("sync-err").textContent="";$("sync-err2").textContent="";
+  if($("sdlg").showModal)$("sdlg").showModal();
+});
+$("sx").addEventListener("click",function(){$("sdlg").close()});
+$("sync-connect").addEventListener("click",function(){connectSync($("sync-tok").value,$("sync-gid").value)});
+$("sync-now").addEventListener("click",async function(){
+  await syncPull(false);
+  if(!$("sync-err2").textContent)say("ซิงค์ข้อมูลล่าสุดแล้ว");
+});
+$("sync-qr-btn").addEventListener("click",function(){
+  var box=$("qr-box");
+  var show=box.classList.toggle("hide");
+  if(!show)$("qr-svg").innerHTML=renderQrSvg(makePairUrl());
+});
+$("sync-copy-link").addEventListener("click",function(){
+  var url=makePairUrl();
+  try{navigator.clipboard.writeText(url).then(function(){say("คัดลอกลิงก์เชื่อมต่อแล้ว")},function(){say("คัดลอกไม่ได้")})}
+  catch(e){say("คัดลอกไม่ได้")}
+});
+$("sync-disconnect").addEventListener("click",function(){
+  SYNC={token:"",gistId:"",user:"",lastSyncAt:0};
+  try{localStorage.removeItem(SKEY)}catch(e){}
+  $("sync-tok").value="";$("sync-gid").value="";
+  updateSyncUi();
+  say("ยกเลิกการเชื่อมต่อซิงค์แล้ว");
+});
+document.addEventListener("visibilitychange",function(){
+  if(!document.hidden&&SYNC.token&&SYNC.gistId&&Date.now()-LAST_PULL>12000)syncPull(true);
+});
+
 $("tb").addEventListener("click",function(e){
   if(e.target.id==="more"){SHOWN+=LIM;render();return}
   var tr=e.target.closest("tr.row");if(!tr)return;
@@ -1134,7 +1957,7 @@ $("dc").addEventListener("click",function(){$("dlg").close()});
 $("dok").addEventListener("click",function(){var f=DF;DF=null;$("dlg").close();if(f)f()});
 $("all").addEventListener("click",function(){D.forEach(function(_,k){S[k]=true});save();render();say("ติ๊กครบ "+D.length+" รายการแล้ว")});
 arm("clr","ล้างการติ๊ก",function(){S={};save();render();say("ล้างการติ๊กแล้ว")});
-arm("nw","เปลี่ยนไฟล์",function(){SH={};ST={};CUR="";RAW=[];D=[];S={};LC=[];save();$("file").value="";$("ta").classList.add("hide");render()});
+arm("nw","เปลี่ยนไฟล์",function(){SH={};ST={};CUR="";RAW=[];D=[];S={};LC=[];FILE_ID="";FNAME="";FEXT="";save(true);$("file").value="";$("ta").classList.add("hide");render()});
 $("cp").addEventListener("click",function(){
   var a=[],b=[];D.forEach(function(r,k){(S[k]?a:b).push(lab(r,k))});
   var t=(T?T+"\n":"")+(Object.keys(SH).length>1?"ชีต: "+CUR+"\n":"")+(U?U+"\n":"")+"\nทั้งหมด "+D.length+" | เช็คแล้ว "+a.length+" | ยังไม่เช็ค "+b.length+"\n\nเช็คแล้ว ("+a.length+")\n"+a.map(function(x,i){return(i+1)+". "+x}).join("\n")+"\n\nยังไม่ได้เช็ค ("+b.length+")\n"+b.map(function(x,i){return(i+1)+". "+x}).join("\n");
@@ -1191,7 +2014,7 @@ function handle(f){
       wb.SheetNames.forEach(function(k,i){var m=wb.Workbook&&wb.Workbook.Sheets&&wb.Workbook.Sheets[i];if(m&&m.Hidden)return;
         o[k]=XLSX.utils.sheet_to_json(wb.Sheets[k],{header:1,defval:"",raw:false,dateNF:"dd/mm/yyyy"}).map(function(x){return x.map(cell)})})}
     if(my!==TOK)return;
-    setSheets(o);busy(0);$("err").textContent="";
+    setSheets(o,{name:f.name,ext:(f.name.split(".").pop()||"DATA").toUpperCase()});busy(0);$("err").textContent="";
   }catch(e){busy(0);fail(e.message||"อ่านไฟล์ไม่ได้ (ไฟล์อาจเสีย)")}};
   r.readAsArrayBuffer(f);
 }
@@ -1205,17 +2028,27 @@ $("thm").addEventListener("click",function(){var h=document.documentElement,d=h.
   h.setAttribute("data-theme",n);try{localStorage.setItem("att:theme",n)}catch(e){}});
 $("dens").addEventListener("click",function(){var c=$("tw").classList.toggle("cmp");this.setAttribute("aria-pressed",c);this.textContent=c?"กระชับ":"ปกติ"});
 if(window.matchMedia&&matchMedia("(max-width:999px)").matches)$("sumd").open=false;
+loadHist();
+loadSync();
 load();
-if(RAW.length){var snap={SH:SH,CUR:CUR,ST:ST,RAW:RAW,HR:HR,LC:LC,S:S};
-  SH={};CUR="";ST={};RAW=[];HR=0;LC=[];S={};render();
+if(RAW.length){
+  var snap={SH:SH,CUR:CUR,ST:ST,RAW:RAW,HR:HR,LC:LC,S:S,FID:FILE_ID,FNAME:FNAME,FEXT:FEXT};
+  if(!snap.FID){
+    snap.FID="f_"+Date.now().toString(36);
+    FILE_ID=snap.FID;FNAME=snap.FNAME||snap.CUR;FEXT=snap.FEXT||"DATA";
+    upsertHist();
+  }
+  SH={};CUR="";ST={};RAW=[];HR=0;LC=[];S={};FILE_ID="";FNAME="";FEXT="";render();
   var rb=document.createElement("div");rb.id="resume";rb.className="dp";rb.style.cssText="margin-top:16px;text-align:center";
   var tx=document.createElement("span");tx.textContent="พบข้อมูลที่บันทึกไว้จากครั้งก่อน (ชีต "+snap.CUR+" · "+snap.RAW.length+" แถว) ";
   var b1=document.createElement("button");b1.type="button";b1.className="p";b1.id="rs-use";b1.textContent="ใช้ต่อ";
   var b2=document.createElement("button");b2.type="button";b2.id="rs-new";b2.textContent="เริ่มใหม่ (ล้างข้อมูลเก่า)";b2.style.marginLeft="6px";
-  b1.addEventListener("click",function(){SH=snap.SH;CUR=snap.CUR;ST=snap.ST;RAW=snap.RAW;HR=snap.HR;LC=snap.LC;S=snap.S;full()});
+  b1.addEventListener("click",function(){rb.remove();SH=snap.SH;CUR=snap.CUR;ST=snap.ST;RAW=snap.RAW;HR=snap.HR;LC=snap.LC;S=snap.S;FILE_ID=snap.FID;FNAME=snap.FNAME;FEXT=snap.FEXT;full()});
   b2.addEventListener("click",function(){try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+"s")}catch(e){}stat("");rb.remove()});
-  rb.append(tx,b1,b2);$("up").appendChild(rb)}
+  rb.append(tx,b1,b2);$("up").insertBefore(rb,$("hist-up"))}
 else render();
+checkPairHash();
+if(SYNC.token&&SYNC.gistId&&location.hash.indexOf("#pair=")!==0)syncPull(true);
 </script>
 </body>
 </html>
