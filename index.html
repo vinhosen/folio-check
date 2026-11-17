@@ -114,6 +114,22 @@ h1,h2,h3,p{margin:0}
   -webkit-backdrop-filter:blur(12px);
   border-bottom:1px solid var(--bd);
 }
+.brand-btn{
+  height:auto;
+  padding:4px 8px 4px 4px;
+  margin-left:-4px;
+  border:1px solid transparent;
+  background:transparent;
+  border-radius:8px;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  cursor:pointer;
+}
+.brand-btn:hover{
+  background:var(--hv);
+  border-color:transparent;
+}
 .lg{
   width:26px;
   height:26px;
@@ -1182,10 +1198,12 @@ dialog.dlg-md{max-width:470px}
 </head>
 <body>
 <header class="hd">
-  <div class="lg" aria-hidden="true">
-    <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>
-  </div>
-  <span class="an">FOLIOCHECK</span>
+  <button id="home-btn" class="brand-btn" type="button" aria-label="กลับหน้าหลัก FolioCheck" title="กลับหน้าหลัก">
+    <div class="lg" aria-hidden="true">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg>
+    </div>
+    <span class="an">FOLIOCHECK</span>
+  </button>
   <span class="hdoc" id="hdoc"></span>
   <span class="fl"></span>
   <span id="sv" class="dp" role="status" aria-live="polite"></span>
@@ -2047,6 +2065,20 @@ if(RAW.length){
   b2.addEventListener("click",function(){try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+"s")}catch(e){}stat("");rb.remove()});
   rb.append(tx,b1,b2);$("up").insertBefore(rb,$("hist-up"))}
 else render();
+function goHome(){
+  if(RAW.length){
+    save(true);
+    SH={};ST={};CUR="";RAW=[];D=[];S={};LC=[];FILE_ID="";FNAME="";FEXT="";
+    try{localStorage.removeItem(KEY);localStorage.removeItem(KEY+"s")}catch(e){}
+    $("hdoc").textContent="";
+    $("file").value="";
+    $("ta").classList.add("hide");
+    var rs=$("resume");if(rs)rs.remove();
+    render();
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+$("home-btn").addEventListener("click",goHome);
 checkPairHash();
 if(SYNC.token&&SYNC.gistId&&location.hash.indexOf("#pair=")!==0)syncPull(true);
 </script>
