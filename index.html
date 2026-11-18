@@ -1395,6 +1395,114 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
 .tag-opts{display:flex;gap:6px;flex-wrap:wrap}
 .tag-opt{height:30px;padding:0 10px;font-size:12.5px}
 .tag-opt.on{background:var(--pr);border-color:var(--pr);color:var(--pr-ink)}
+/* Phase 2: Step-Filter Bar & Rapid Return / Check-in Mode */
+.wf-fbar{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px;
+  padding:8px 14px;
+  border-bottom:1px solid var(--bd);
+  background:color-mix(in srgb, var(--bg) 55%, var(--sf));
+}
+.wf-fchip{
+  height:26px;
+  padding:0 9px;
+  font-size:12px;
+  border-radius:6px;
+  border:1px solid var(--bd);
+  background:var(--sf);
+  color:var(--t2);
+  gap:5px;
+}
+.wf-fchip:hover{background:var(--s2);color:var(--t1)}
+.wf-fchip.on{
+  background:var(--pr);
+  border-color:var(--pr);
+  color:var(--pr-ink);
+  font-weight:600;
+}
+.wf-fchip b{font-family:var(--mono);font-size:11px;font-weight:500;opacity:.85}
+.rr-top{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  align-items:center;
+}
+.rr-inp{
+  width:100%;
+  height:40px;
+  padding:0 12px;
+  font-size:14px;
+  border:1.5px solid var(--bd);
+  border-radius:8px;
+  background:var(--bg);
+  color:var(--t1);
+}
+.rr-inp:focus{background:var(--sf);border-color:var(--pr);outline:none}
+.rr-status{
+  padding:9px 12px;
+  border-radius:8px;
+  font-size:13px;
+  font-weight:500;
+  background:var(--bg);
+  border:1px solid var(--bd);
+  color:var(--t2);
+}
+.rr-status.ok{
+  background:var(--okb);
+  border-color:var(--ok-bd);
+  color:var(--ok);
+}
+.rr-status.warn{
+  background:var(--ac-soft);
+  border-color:color-mix(in srgb, var(--ac) 30%, transparent);
+  color:var(--ac);
+}
+.rr-list{
+  border:1px solid var(--bd);
+  border-radius:8px;
+  overflow:hidden;
+  max-height:240px;
+  overflow-y:auto;
+}
+.rr-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 12px;
+  border-bottom:1px solid var(--bd);
+  font-size:13px;
+}
+.rr-row:last-child{border-bottom:0}
+.rr-row-main{min-width:0;flex:1}
+.rr-row-title{font-weight:600;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr-row-sub{font-size:11.5px;color:var(--t2);margin-top:2px}
+.rr-log{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  max-height:110px;
+  overflow-y:auto;
+}
+.rr-log-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  font-size:12px;
+  color:var(--t2);
+  padding:4px 8px;
+  border-radius:6px;
+  background:var(--bg);
+}
+.rr-undo{
+  height:22px;
+  min-height:22px;
+  padding:0 7px;
+  font-size:11px;
+}
 @media(max-width:440px){
   .sync-btns{grid-template-columns:1fr}
   .wf-presets{grid-template-columns:1fr}
@@ -1504,10 +1612,12 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
             </div>
           </details>
           <button id="wf-btn" type="button" data-multi="0" title="ตั้งค่าขั้นตอนการตรวจสอบ (Workflow)"><span id="wf-btn-lbl">โหมด: 1 ขั้น</span></button>
+          <button id="rr-btn" type="button" title="โหมดสแกน / ติ๊กไว (Rapid Return)">ติ๊กไว</button>
           <button id="dens" type="button" aria-pressed="false" title="ความหนาแน่นของตาราง">ปกติ</button>
           <button id="all" type="button">ติ๊กทั้งหมด</button>
           <button id="clr" type="button">ล้างการติ๊ก</button>
         </div>
+        <div id="wf-fbar" class="wf-fbar hide" aria-label="กรองตามขั้นตอน"></div>
         <div class="tw" id="tw">
           <table>
             <thead id="th"></thead>
@@ -1667,6 +1777,35 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
     <div class="r">
       <button id="m-clr" type="button">ล้างข้อมูลแถวนี้</button>
       <button id="m-save" class="p" type="button">บันทึก</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="rrdlg" class="dlg-lg" aria-labelledby="rrt">
+  <div class="dlg-hd">
+    <h3 id="rrt">โหมดติ๊กไว / สแกนคืน</h3>
+    <button id="rrx" class="dlg-x" type="button" aria-label="ปิด">✕</button>
+  </div>
+  <div class="sync-sec">
+    <div class="rr-top">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <label for="rr-step" class="dp">ขั้นตอนเป้าหมาย</label>
+        <span class="selw">
+          <select id="rr-step"></select>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+        </span>
+      </div>
+      <label class="wf-meta-chk" style="font-size:12.5px">
+        <input type="checkbox" id="rr-auto" checked>
+        <span>กด Enter ติ๊กทันที</span>
+      </label>
+    </div>
+    <input id="rr-q" class="rr-inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="พิมพ์ชื่อ, รหัส, เลขลำดับ หรือสแกนบาร์โค้ด แล้วกด Enter...">
+    <div id="rr-status" class="rr-status">พร้อมรับข้อมูล — พิมพ์ค้นหาหรือสแกนเพื่อทำรายการ</div>
+    <div id="rr-list" class="rr-list"></div>
+    <div id="rr-log-wrap" class="hide">
+      <div class="dp" style="margin-bottom:4px">ประวัติล่าสุดในรอบนี้</div>
+      <div id="rr-log" class="rr-log"></div>
     </div>
   </div>
 </dialog>
@@ -1884,12 +2023,28 @@ function rowMetaHtml(k,showMeta){
   }
   return out;
 }
+var STEP_FILTER="all";
+function renderStepFilterBar(){
+  var bar=$("wf-fbar");if(!bar)return;
+  if(!isMultiWf()||!D.length){bar.classList.add("hide");bar.innerHTML="";STEP_FILTER="all";return}
+  bar.classList.remove("hide");
+  var parts=['<button type="button" class="wf-fchip'+(STEP_FILTER==="all"?" on":"")+'" data-sf="all">ทุกขั้นตอน</button>'];
+  WF.steps.forEach(function(st){
+    var rem=0;D.forEach(function(_,k){if(!getStepChecked(k,st.id))rem++});
+    var key="miss:"+st.id;
+    parts.push('<button type="button" class="wf-fchip'+(STEP_FILTER===key?" on":"")+'" data-sf="'+esc(key)+'">รอ: '+esc(st.label)+' <b>'+rem+'</b></button>');
+  });
+  var issueCnt=0;D.forEach(function(_,k){var rd=getRowData(k);if(rd&&rd.statusTag&&rd.statusTag!=="normal")issueCnt++});
+  if(issueCnt)parts.push('<button type="button" class="wf-fchip'+(STEP_FILTER==="tagged"?" on":"")+'" data-sf="tagged">มีแท็ก <b>'+issueCnt+'</b></button>');
+  bar.innerHTML=parts.join("");
+}
 function render(){
   $("up").classList.toggle("hide",D.length>0||RAW.length>0);
   $("app").classList.toggle("hide",!RAW.length);
   renderHist();
   if(!RAW.length)return;
   updateWfBtn();
+  renderStepFilterBar();
   var multi=isMultiWf(),showMeta=!!(multi||(WF&&WF.showMeta));
   $("title").textContent=T||FNAME||"เช็คชื่อ / เช็ครายการ";
   $("sub").textContent=U||(multi?"เลือกทำเครื่องหมายในแต่ละขั้นตอนตามลำดับ":"ติ๊กช่องหน้าแถวเพื่อตรวจสอบรายการ");
@@ -1899,7 +2054,12 @@ function render(){
   D.forEach(function(r,k){
     var ck=isRowDone(k),pt=isRowPartial(k);
     if(F==="u"&&ck||F==="c"&&!ck)return;
-    var rd=getRowData(k),metaHy=rd?((rd.note||"")+" "+(TAG_LABELS[rd.statusTag]||"")).toLowerCase():"";
+    var rd=getRowData(k);
+    if(multi&&STEP_FILTER!=="all"){
+      if(STEP_FILTER==="tagged"){if(!rd||!rd.statusTag||rd.statusTag==="normal")return}
+      else if(STEP_FILTER.indexOf("miss:")===0){if(getStepChecked(k,STEP_FILTER.slice(5)))return}
+    }
+    var metaHy=rd?((rd.note||"")+" "+(TAG_LABELS[rd.statusTag]||"")).toLowerCase():"";
     if(q&&HY[k].indexOf(q)<0&&metaHy.indexOf(q)<0)return;
     cnt++;if(cnt>SHOWN)return;
     var ctrl="";
@@ -2558,6 +2718,118 @@ $("m-clr").addEventListener("click",function(){
   if(META_ROW_K==null)return;
   setRowMeta(META_ROW_K,"normal","");
   save();render();$("mdlg").close();say("ล้างแท็กและหมายเหตุแถวนี้แล้ว");
+});
+
+/* === Phase 2: Step-Filter Bar & Rapid Return / Check-in Mode === */
+$("wf-fbar").addEventListener("click",function(e){
+  var b=e.target.closest("[data-sf]");if(!b)return;
+  STEP_FILTER=b.dataset.sf;SHOWN=LIM;render();
+});
+var RR_LOG=[];
+function resolveRrStep(k){
+  var sel=$("rr-step").value;
+  if(sel!=="__next__")return sel;
+  for(var i=0;i<WF.steps.length;i++){
+    if(!getStepChecked(k,WF.steps[i].id))return WF.steps[i].id;
+  }
+  return WF.steps[WF.steps.length-1].id;
+}
+function stepLabelById(id){
+  for(var i=0;i<WF.steps.length;i++)if(WF.steps[i].id===id)return WF.steps[i].label;
+  return id;
+}
+function findRrMatches(qRaw){
+  var q=(qRaw||"").trim().toLowerCase();
+  var exact=[],partial=[];
+  D.forEach(function(r,k){
+    var idxStr=String(k+1);
+    var hasExact=q&&(idxStr===q||C.some(function(ci){return cell(r[ci]).toLowerCase()===q}));
+    if(hasExact){exact.push(k);return}
+    if(!q||HY[k].indexOf(q)>-1||idxStr===q)partial.push(k);
+  });
+  return{exact:exact,list:exact.concat(partial)};
+}
+function setRrStatus(msg,cls){
+  var el=$("rr-status");
+  el.textContent=msg;
+  el.className="rr-status"+(cls?" "+cls:"");
+}
+function execRr(k,stepId,forceVal){
+  var prev=getStepChecked(k,stepId);
+  var next=(typeof forceVal==="boolean")?forceVal:!prev;
+  setRowStep(k,stepId,next);
+  save();render();
+  var rLabel=lab(D[k]||[],parseInt(k,10)),sLabel=stepLabelById(stepId);
+  RR_LOG.unshift({k:k,rowLabel:rLabel,stepId:stepId,stepLabel:sLabel,prevVal:prev,nextVal:next,ts:Date.now()});
+  if(RR_LOG.length>8)RR_LOG.length=8;
+  setRrStatus((next?"✓ บันทึกแล้ว: ":"↩ ยกเลิกแล้ว: ")+(parseInt(k,10)+1)+". "+rLabel+" ("+sLabel+")",next?"ok":"warn");
+  renderRr();
+}
+function renderRr(){
+  var q=$("rr-q").value,res=findRrMatches(q),items=res.list.slice(0,10);
+  if(!items.length){
+    $("rr-list").innerHTML='<div class="dp" style="padding:14px;text-align:center">ไม่พบรายการที่ตรงกับคำค้นหา</div>';
+  }else{
+    $("rr-list").innerHTML=items.map(function(k){
+      var sid=resolveRrStep(k),on=getStepChecked(k,sid),sLbl=stepLabelById(sid);
+      var sub="แถว #"+(k+1)+(isMultiWf()?(" · ทำแล้ว "+rowDoneCount(k)+"/"+WF.steps.length):"");
+      return'<div class="rr-row">'+
+        '<div class="rr-row-main"><div class="rr-row-title">'+esc(lab(D[k]||[],k))+'</div><div class="rr-row-sub">'+esc(sub)+'</div></div>'+
+        '<button type="button" class="'+(on?"":"p")+'" data-rrk="'+k+'" data-rrs="'+esc(sid)+'" style="height:30px;font-size:12px">'+(on?("✓ "+esc(sLbl)+" (ยกเลิก)"):("ติ๊ก: "+esc(sLbl)))+'</button>'+
+      '</div>';
+    }).join("");
+  }
+  $("rr-log-wrap").classList.toggle("hide",!RR_LOG.length);
+  $("rr-log").innerHTML=RR_LOG.map(function(it,idx){
+    return'<div class="rr-log-item"><span>'+(it.nextVal?"✓":"↩")+" "+esc(it.rowLabel)+" · "+esc(it.stepLabel)+'</span><button type="button" class="rr-undo" data-rrundo="'+idx+'">ย้อนกลับ</button></div>';
+  }).join("");
+}
+function openRrModal(){
+  var opts=isMultiWf()?'<option value="__next__">ขั้นถัดไปอัตโนมัติ (Auto-Next)</option>':"";
+  opts+=WF.steps.map(function(st,i){
+    return'<option value="'+esc(st.id)+'">'+(isMultiWf()?((i+1)+". "):"")+esc(st.label)+'</option>';
+  }).join("");
+  $("rr-step").innerHTML=opts;
+  if(isMultiWf()&&WF.steps.length===2)$("rr-step").value=WF.steps[1].id;
+  $("rr-q").value="";
+  setRrStatus("พร้อมรับข้อมูล — พิมพ์ชื่อ/รหัส หรือสแกนแล้วกด Enter","");
+  renderRr();
+  if($("rrdlg").showModal)$("rrdlg").showModal();
+  setTimeout(function(){$("rr-q").focus()},40);
+}
+$("rr-btn").addEventListener("click",openRrModal);
+$("rrx").addEventListener("click",function(){$("rrdlg").close()});
+$("rr-step").addEventListener("change",renderRr);
+$("rr-q").addEventListener("input",renderRr);
+$("rr-q").addEventListener("keydown",function(e){
+  if(e.key!=="Enter"||!$("rr-auto").checked)return;
+  e.preventDefault();
+  var q=this.value.trim();if(!q)return;
+  var res=findRrMatches(q);
+  var targetK=res.exact.length===1?res.exact[0]:(res.list.length===1?res.list[0]:null);
+  if(targetK==null){
+    setRrStatus(res.list.length?("พบ "+res.list.length+" รายการ กรุณาพิมพ์ให้เฉพาะเจาะจงหรือกดเลือกรายการด้านล่าง"):"ไม่พบรายการ \""+q+"\"","warn");
+    return;
+  }
+  var sid=resolveRrStep(targetK);
+  execRr(targetK,sid,true);
+  this.value="";
+  renderRr();
+  this.focus();
+});
+$("rr-list").addEventListener("click",function(e){
+  var b=e.target.closest("[data-rrk]");if(!b)return;
+  execRr(b.dataset.rrk,b.dataset.rrs);
+  $("rr-q").focus();
+});
+$("rr-log").addEventListener("click",function(e){
+  var b=e.target.closest("[data-rrundo]");if(!b)return;
+  var it=RR_LOG[+b.dataset.rrundo];if(!it)return;
+  setRowStep(it.k,it.stepId,it.prevVal);
+  save();render();
+  RR_LOG.splice(+b.dataset.rrundo,1);
+  setRrStatus("ย้อนกลับรายการ "+it.rowLabel+" แล้ว","warn");
+  renderRr();
 });
 async function readPdf(buf){
   var L=window.pdfjsLib;if(!L)throw new Error("โหลดตัวอ่าน PDF ไม่สำเร็จ");
