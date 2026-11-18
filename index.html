@@ -1224,10 +1224,25 @@ dialog.dlg-md{max-width:470px}
 }
 .wf-opt b{font-size:13px;font-weight:600;color:var(--t1)}
 .wf-opt span{font-size:11.5px;color:var(--t2);line-height:1.35}
+.wf-opt-full{grid-column:1 / -1}
+.wf-custom-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:10px 12px;
+  border:1px solid var(--bd);
+  border-radius:8px;
+  background:var(--bg);
+}
+.wf-custom-ctrl{display:flex;align-items:center;gap:6px}
 .wf-steps-ed{
   display:flex;
   flex-direction:column;
   gap:8px;
+  max-height:210px;
+  overflow:auto;
+  padding-right:2px;
 }
 .wf-step-row{
   display:flex;
@@ -1606,6 +1621,17 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
   <div class="sync-sec">
     <p style="margin:0;color:var(--t2);font-size:13px">เลือกโหมดการทำงานสำหรับชีตนี้ (ค่าเริ่มต้นคือเช็ค 1 ขั้นตอน)</p>
     <div id="wf-presets" class="wf-presets"></div>
+    <div id="wf-custom-row" class="wf-custom-row hide">
+      <div>
+        <div style="font-size:13px;font-weight:600">จำนวนขั้นตอนที่ต้องการ</div>
+        <div class="dp" style="font-size:11.5px">ระบุตัวเลข 1 – 15 ขั้นตอน</div>
+      </div>
+      <div class="wf-custom-ctrl">
+        <button type="button" id="wf-dec" class="ib" aria-label="ลดจำนวนขั้น">−</button>
+        <input type="number" id="wf-custom-n" min="1" max="15" value="4" aria-label="จำนวนขั้นตอน" style="width:62px;text-align:center">
+        <button type="button" id="wf-inc" class="ib" aria-label="เพิ่มจำนวนขั้น">+</button>
+      </div>
+    </div>
     <div id="wf-steps-wrap">
       <div class="dp" style="margin-bottom:6px">ชื่อแต่ละขั้นตอน (แก้ไขได้)</div>
       <div id="wf-steps-ed" class="wf-steps-ed"></div>
@@ -2439,11 +2465,34 @@ $("sh").addEventListener("change",function(){
 
 /* === Phase 1 UI: Workflow Preset & Row Metadata Modals === */
 var WF_DRAFT=null,META_ROW_K=null,META_TAG="normal";
+function syncDraftLabels(){
+  $("wf-steps-ed").querySelectorAll("[data-wfs]").forEach(function(inp){
+    var idx=+inp.dataset.wfs,v=cell(inp.value);
+    if(WF_DRAFT&&WF_DRAFT.steps[idx]&&v)WF_DRAFT.steps[idx].label=v;
+  });
+}
+function resizeDraftSteps(n){
+  n=Math.max(1,Math.min(15,parseInt(n,10)||1));
+  syncDraftLabels();
+  var next=[];
+  for(var i=0;i<n;i++){
+    var prev=WF_DRAFT.steps[i];
+    next.push({id:"step_"+(i+1),label:(prev&&prev.label)?prev.label:("ขั้นที่ "+(i+1))});
+  }
+  WF_DRAFT.steps=next;
+  if(n>1)WF_DRAFT.showMeta=true;
+  renderWfModal();
+}
 function renderWfModal(){
-  $("wf-presets").innerHTML=Object.keys(WF_PRESETS).map(function(pid){
+  var presetHtml=Object.keys(WF_PRESETS).map(function(pid){
     var p=WF_PRESETS[pid];
     return'<button type="button" class="wf-opt'+(WF_DRAFT.workflowPreset===pid?" on":"")+'" data-pid="'+pid+'"><b>'+esc(p.name)+'</b><span>'+esc(p.desc)+'</span></button>';
   }).join("");
+  presetHtml+='<button type="button" class="wf-opt wf-opt-full'+(WF_DRAFT.workflowPreset==="custom"?" on":"")+'" data-pid="custom"><b>กำหนดเอง: สร้างหลายขั้นตอน (N ขั้น)</b><span>กรอกจำนวนขั้นตอนที่ต้องการเองได้ (1–15 ขั้น) พร้อมตั้งชื่อทีละขั้น</span></button>';
+  $("wf-presets").innerHTML=presetHtml;
+  var isCust=WF_DRAFT.workflowPreset==="custom";
+  $("wf-custom-row").classList.toggle("hide",!isCust);
+  if(isCust)$("wf-custom-n").value=WF_DRAFT.steps.length;
   $("wf-steps-ed").innerHTML=WF_DRAFT.steps.map(function(st,idx){
     return'<div class="wf-step-row"><span class="wf-step-num">ขั้นที่ '+(idx+1)+'</span><input type="text" class="sync-inp" data-wfs="'+idx+'" value="'+esc(st.label)+'" maxlength="40"></div>';
   }).join("");
@@ -2457,18 +2506,24 @@ $("wf-btn").addEventListener("click",function(){
 $("wfx").addEventListener("click",function(){$("wfdlg").close()});
 $("wf-presets").addEventListener("click",function(e){
   var b=e.target.closest("[data-pid]");if(!b)return;
-  var p=WF_PRESETS[b.dataset.pid];if(!p)return;
+  var pid=b.dataset.pid;
+  if(pid==="custom"){
+    WF_DRAFT.workflowPreset="custom";
+    var n=WF_DRAFT.steps.length>=4?WF_DRAFT.steps.length:4;
+    resizeDraftSteps(n);
+    return;
+  }
+  var p=WF_PRESETS[pid];if(!p)return;
   WF_DRAFT.workflowPreset=p.id;
   WF_DRAFT.steps=clone(p.steps);
   if(p.steps.length>1)WF_DRAFT.showMeta=true;
   renderWfModal();
 });
+$("wf-custom-n").addEventListener("change",function(){resizeDraftSteps(this.value)});
+$("wf-dec").addEventListener("click",function(){resizeDraftSteps((WF_DRAFT?WF_DRAFT.steps.length:4)-1)});
+$("wf-inc").addEventListener("click",function(){resizeDraftSteps((WF_DRAFT?WF_DRAFT.steps.length:4)+1)});
 $("wf-apply").addEventListener("click",function(){
-  var inputs=$("wf-steps-ed").querySelectorAll("[data-wfs]");
-  inputs.forEach(function(inp){
-    var idx=+inp.dataset.wfs,v=cell(inp.value);
-    if(WF_DRAFT.steps[idx]&&v)WF_DRAFT.steps[idx].label=v;
-  });
+  syncDraftLabels();
   WF.workflowPreset=WF_DRAFT.workflowPreset;
   WF.steps=WF_DRAFT.steps;
   WF.showMeta=!!$("wf-meta-tgl").checked;
