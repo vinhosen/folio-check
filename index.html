@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.sheetjs.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; child-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://api.github.com https://gist.githubusercontent.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://tessdata.projectnaptha.com blob: data:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>FolioCheck — Checklist Workspace</title>
-<link rel="icon" type="image/png" href="./FolioCheck%20Logo%20%E0%B9%82%E0%B8%9B%E0%B8%A3%E0%B9%88%E0%B8%87%E0%B9%83%E0%B8%AA.png">
-<link rel="apple-touch-icon" href="./FolioCheck%20Logo%20%E0%B9%82%E0%B8%9B%E0%B8%A3%E0%B9%88%E0%B8%87%E0%B9%83%E0%B8%AA.png">
+<link rel="icon" type="image/png" href="./FolioCheck%20Logo%20picture.png">
+<link rel="apple-touch-icon" href="./FolioCheck%20Logo%20picture.png">
 <meta property="og:image" content="./FolioCheck%20Logo.png">
 <meta name="twitter:image" content="./FolioCheck%20Logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,6 +138,13 @@ h1,h2,h3,p{margin:0}
 .brand-logo{
   height:30px;
   width:30px;
+  object-fit:contain;
+  flex-shrink:0;
+  display:block;
+}
+.brand-name-img{
+  height:22px;
+  width:auto;
   object-fit:contain;
   flex-shrink:0;
   display:block;
@@ -1831,8 +1838,8 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
 <body>
 <header class="hd">
   <button id="home-btn" class="brand-btn" type="button" aria-label="กลับหน้าหลัก FolioCheck" title="กลับหน้าหลัก">
-    <img class="brand-logo" src="./FolioCheck%20Logo%20%E0%B9%82%E0%B8%9B%E0%B8%A3%E0%B9%88%E0%B8%87%E0%B9%83%E0%B8%AA.png" alt="" width="30" height="30">
-    <span class="an">FOLIOCHECK</span>
+    <img class="brand-logo" src="./FolioCheck%20Logo%20picture.png" alt="" width="30" height="30">
+    <img class="brand-name-img" src="./FolioCheck%20Logo%20name.png" alt="FolioCheck" width="97" height="22">
   </button>
   <span class="hdoc" id="hdoc"></span>
   <span class="fl"></span>
