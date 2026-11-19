@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.sheetjs.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; child-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://api.github.com https://gist.githubusercontent.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://tessdata.projectnaptha.com blob: data:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>FolioCheck — Checklist Workspace</title>
+<meta name="theme-color" content="#F7F6F2">
+<link rel="manifest" href="./manifest.json">
 <link rel="icon" type="image/png" href="./FolioCheck%20Logo%20picture.png">
 <link rel="apple-touch-icon" href="./FolioCheck%20Logo%20picture.png">
 <meta property="og:image" content="./FolioCheck%20Logo.png">
@@ -4153,6 +4155,13 @@ function goHome(){
 $("home-btn").addEventListener("click",goHome);
 checkPairHash();
 if(SYNC.token&&SYNC.gistId&&location.hash.indexOf("#pair=")!==0)syncPull(true);
+</script>
+<script>
+if("serviceWorker"in navigator&&location.protocol!=="file:"){
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("./sw.js").catch(function(){});
+  });
+}
 </script>
 </body>
 </html>
