@@ -1503,9 +1503,126 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
   padding:0 7px;
   font-size:11px;
 }
+.ocr-drop-row{
+  margin-top:12px;
+  display:flex;
+  justify-content:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.diff-src{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.diff-src-full{grid-column:1/-1}
+.diff-kpis{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--bd);
+  border-radius:10px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.diff-kpi{
+  padding:10px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+.diff-kpi+.diff-kpi{border-left:1px solid var(--bd)}
+.diff-kpi span{font-size:11px;color:var(--t2);font-weight:600}
+.diff-kpi b{font-size:20px;line-height:1.15;font-variant-numeric:tabular-nums}
+.diff-kpi.k-match b{color:var(--ok)}
+.diff-kpi.k-add b{color:var(--ac)}
+.diff-kpi.k-rem b{color:var(--err,#b91c1c)}
+.diff-tabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.diff-tab{
+  height:30px;
+  min-height:30px;
+  padding:0 11px;
+  font-size:12px;
+  border-radius:8px;
+  border:1px solid var(--bd);
+  background:var(--bg);
+  color:var(--t2);
+}
+.diff-tab.on{
+  background:var(--t1);
+  color:var(--bg);
+  border-color:var(--t1);
+  font-weight:600;
+}
+.diff-list{
+  max-height:240px;
+  overflow:auto;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--bg);
+}
+.diff-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--bd);
+  font-size:13px;
+}
+.diff-row:last-child{border-bottom:none}
+.diff-row-lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.diff-badge{
+  flex-shrink:0;
+  font-size:11px;
+  font-weight:600;
+  padding:2px 7px;
+  border-radius:6px;
+  border:1px solid var(--bd);
+}
+.diff-badge.add{color:var(--ac);border-color:color-mix(in srgb,var(--ac) 38%,var(--bd))}
+.diff-badge.rem{color:var(--err,#b91c1c);border-color:color-mix(in srgb,var(--err,#b91c1c) 38%,var(--bd))}
+.diff-badge.match{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 38%,var(--bd))}
+.diff-foot,.ocr-foot{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.ocr-ctrl{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.ocr-prog{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:10px 12px;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--bg);
+}
+.ocr-txt{
+  width:100%;
+  min-height:190px;
+  padding:10px 12px;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--bg);
+  color:var(--t1);
+  font:13px/1.6 var(--mono);
+  resize:vertical;
+}
 @media(max-width:440px){
   .sync-btns{grid-template-columns:1fr}
   .wf-presets{grid-template-columns:1fr}
+  .diff-src{grid-template-columns:1fr}
 }
 @media(prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important}
@@ -1549,7 +1666,10 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
       <button class="p" type="button">เลือกไฟล์</button>
       <input type="file" id="file" accept=".xlsx,.xls,.csv,.pdf" class="hide">
       <div class="fm"><span>XLSX</span><span>XLS</span><span>CSV</span><span>PDF</span></div>
-      <p class="dp drop-note">PDF ต้องมีข้อความที่เลือกได้ ไฟล์สแกนที่เป็นรูปภาพยังอ่านไม่ได้</p>
+      <p class="dp drop-note">PDF ต้องมีข้อความที่เลือกได้ หากเป็นรูปภาพ/สแกน สามารถใช้ OCR ด้านล่างหรือวางรูปลงที่นี่ได้</p>
+    </div>
+    <div class="ocr-drop-row">
+      <button id="ocr-btn" type="button" title="สแกนรายชื่อจากรูปภาพด้วย OCR ในเบราว์เซอร์ (โหลดเมื่อใช้งานเท่านั้น)">สแกนรูปภาพเป็นเช็คลิสต์ (OCR)</button>
     </div>
     <div id="err" class="no" role="alert"></div>
     <div id="hist-up" class="hist-wrap hide">
@@ -1613,6 +1733,7 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
           </details>
           <button id="wf-btn" type="button" data-multi="0" title="ตั้งค่าขั้นตอนการตรวจสอบ (Workflow)"><span id="wf-btn-lbl">โหมด: 1 ขั้น</span></button>
           <button id="rr-btn" type="button" title="โหมดสแกน / ติ๊กไว (Rapid Return)">ติ๊กไว</button>
+          <button id="diff-btn" type="button" title="เปรียบเทียบ / กระทบยอดกับไฟล์อื่น (File Diff)">เทียบไฟล์</button>
           <button id="dens" type="button" aria-pressed="false" title="ความหนาแน่นของตาราง">ปกติ</button>
           <button id="all" type="button">ติ๊กทั้งหมด</button>
           <button id="clr" type="button">ล้างการติ๊ก</button>
@@ -1806,6 +1927,102 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
     <div id="rr-log-wrap" class="hide">
       <div class="dp" style="margin-bottom:4px">ประวัติล่าสุดในรอบนี้</div>
       <div id="rr-log" class="rr-log"></div>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="diffdlg" class="dlg-lg" aria-labelledby="diff-title">
+  <div class="dlg-hd">
+    <h3 id="diff-title">เปรียบเทียบไฟล์ / กระทบยอด (Diff &amp; Reconcile)</h3>
+    <button type="button" id="diffx" class="dlg-x" aria-label="ปิดหน้าต่าง">✕</button>
+  </div>
+  <div class="sync-sec">
+    <p class="dp">เปรียบเทียบรายการในชีตปัจจุบันกับไฟล์อื่นหรือประวัติเดิม เพื่อดูรายการที่ตรงกัน เพิ่มใหม่ หรือหายไป โดยไม่ล้างผลที่ติ๊กไว้</p>
+    <div class="diff-src">
+      <div>
+        <label class="dp" for="diff-hist-sel" style="display:block;margin-bottom:4px">เลือกจากประวัติ</label>
+        <span class="selw" style="width:100%">
+          <select id="diff-hist-sel" style="width:100%"><option value="">— เลือกไฟล์จากประวัติ —</option></select>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+        </span>
+      </div>
+      <div>
+        <span class="dp" style="display:block;margin-bottom:4px">หรืออัปโหลดไฟล์ใหม่</span>
+        <button type="button" id="diff-pick-btn" style="width:100%">เลือกไฟล์เทียบ (.xlsx/.csv/.pdf)</button>
+        <input type="file" id="diff-file" accept=".xlsx,.xls,.csv,.pdf" class="hide">
+      </div>
+      <div>
+        <label class="dp" for="diff-col" style="display:block;margin-bottom:4px">คอลัมน์หลักที่ใช้เทียบ (ชีตปัจจุบัน)</label>
+        <span class="selw" style="width:100%">
+          <select id="diff-col" style="width:100%"></select>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+        </span>
+      </div>
+      <div>
+        <label class="dp" for="diff-ocol" style="display:block;margin-bottom:4px">คอลัมน์หลักที่ใช้เทียบ (ไฟล์ที่นำมาเทียบ)</label>
+        <span class="selw" style="width:100%">
+          <select id="diff-ocol" style="width:100%"><option value="0">คอลัมน์ 1</option></select>
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+        </span>
+      </div>
+    </div>
+    <div id="diff-res" class="hide" style="display:flex;flex-direction:column;gap:10px">
+      <div class="dp" id="diff-meta"></div>
+      <div class="diff-kpis">
+        <div class="diff-kpi k-match"><span>ตรงกัน (Matched)</span><b id="diff-m-cnt">0</b></div>
+        <div class="diff-kpi k-add"><span>เพิ่มใหม่ (Added)</span><b id="diff-a-cnt">0</b></div>
+        <div class="diff-kpi k-rem"><span>หายไป (Removed)</span><b id="diff-r-cnt">0</b></div>
+      </div>
+      <div class="diff-tabs" id="diff-tabs" role="group" aria-label="กรองผลต่าง">
+        <button type="button" class="diff-tab on" data-dt="added">เพิ่มใหม่</button>
+        <button type="button" class="diff-tab" data-dt="removed">หายไป</button>
+        <button type="button" class="diff-tab" data-dt="matched">ตรงกัน</button>
+      </div>
+      <div id="diff-list" class="diff-list"></div>
+      <div class="diff-foot">
+        <button type="button" id="diff-copy">คัดลอกสรุปผลต่าง</button>
+        <button type="button" id="diff-import" class="p">นำเข้ารายการใหม่เข้าชีตนี้</button>
+      </div>
+    </div>
+    <div id="diff-empty" class="dp" style="text-align:center;padding:18px 8px">เลือกไฟล์จากประวัติหรืออัปโหลดไฟล์เพื่อเริ่มเปรียบเทียบ</div>
+  </div>
+</dialog>
+
+<dialog id="ocrdlg" class="dlg-lg" aria-labelledby="ocr-title">
+  <div class="dlg-hd">
+    <h3 id="ocr-title">สแกนรูปภาพเป็นเช็คลิสต์ (Client-Side OCR)</h3>
+    <button type="button" id="ocrx" class="dlg-x" aria-label="ปิดหน้าต่าง">✕</button>
+  </div>
+  <div class="sync-sec">
+    <p class="dp">ประมวลผลในเบราว์เซอร์ 100% ด้วย Tesseract.js (โหลดไลบรารีเฉพาะเมื่อกดใช้งานเท่านั้น)</p>
+    <div class="ocr-ctrl">
+      <span class="selw">
+        <select id="ocr-lang" aria-label="ภาษาสำหรับ OCR">
+          <option value="tha+eng">ไทย + อังกฤษ (tha+eng)</option>
+          <option value="tha">ภาษาไทย (tha)</option>
+          <option value="eng">English (eng)</option>
+        </select>
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
+      </span>
+      <button type="button" id="ocr-pick-btn" class="p">เลือกรูปภาพ (.png/.jpg/.webp)</button>
+      <input type="file" id="ocr-file" accept="image/*" class="hide">
+      <span id="ocr-fname" class="dp"></span>
+    </div>
+    <div id="ocr-prog" class="ocr-prog hide">
+      <div style="display:flex;justify-content:space-between;gap:8px;font-size:12px">
+        <span id="ocr-st">กำลังเตรียมตัวอ่าน OCR…</span>
+        <b id="ocr-pct">0%</b>
+      </div>
+      <div class="pbw"><i id="ocr-bar" style="width:0%"></i></div>
+    </div>
+    <div id="ocr-err" class="no"></div>
+    <div>
+      <label class="dp" for="ocr-text" style="display:block;margin-bottom:4px">ข้อความที่อ่านได้ (แก้ไขได้ 1 บรรทัด = 1 รายการ)</label>
+      <textarea id="ocr-text" class="ocr-txt" placeholder="เลือกรูปภาพเพื่อสแกน หรือวางข้อความรายชื่อที่นี่บรรทัดละ 1 รายการ..."></textarea>
+    </div>
+    <div class="ocr-foot">
+      <button type="button" id="ocr-clr">ล้างข้อความ</button>
+      <button type="button" id="ocr-make" class="p">สร้างเช็คลิสต์จากผล OCR</button>
     </div>
   </div>
 </dialog>
@@ -2855,30 +3072,294 @@ async function readPdf(buf){
 var MAXB=50*1024*1024;
 function fail(t){$("err").className="no";$("err").textContent=t}
 function busy(on,nm){BUSY=on;$("up").classList.toggle("ld",!!on);if(on){$("err").className="dp";$("err").textContent="กำลังอ่านไฟล์"+(nm?" "+nm:"")+"…"}}
+function isImageFile(f){
+  if(!f)return false;
+  var n=(f.name||"").toLowerCase();
+  return/\.(png|jpe?g|gif|webp|bmp|heic)$/.test(n)||(f.type||"").indexOf("image/")===0;
+}
+function parseChecklistFile(f){
+  return new Promise(function(resolve,reject){
+    if(!f)return reject(new Error("ไม่พบไฟล์"));
+    var n=(f.name||"").toLowerCase(),pdf=/\.pdf$/.test(n);
+    if(!/\.(xlsx|xls|csv|pdf)$/.test(n))return reject(new Error("รองรับเฉพาะไฟล์ .xlsx .xls .csv .pdf"));
+    if(!f.size)return reject(new Error("ไฟล์ว่าง (0 ไบต์)"));
+    if(f.size>MAXB)return reject(new Error("ไฟล์ใหญ่เกิน 50 MB"));
+    if(pdf?typeof pdfjsLib==="undefined":typeof XLSX==="undefined")return reject(new Error("โหลดตัวอ่านไฟล์ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วรีเฟรชหน้า"));
+    var r=new FileReader();
+    r.onerror=function(){reject(new Error("อ่านไฟล์ไม่ได้"))};
+    r.onload=async function(){try{
+      var o;
+      if(pdf)o=await readPdf(new Uint8Array(r.result));
+      else{var wb=XLSX.read(new Uint8Array(r.result),{type:"array",cellDates:true,cellNF:true,dateNF:"dd/mm/yyyy"});o={};
+        wb.SheetNames.forEach(function(k,i){var m=wb.Workbook&&wb.Workbook.Sheets&&wb.Workbook.Sheets[i];if(m&&m.Hidden)return;
+          o[k]=XLSX.utils.sheet_to_json(wb.Sheets[k],{header:1,defval:"",raw:false,dateNF:"dd/mm/yyyy"}).map(function(x){return x.map(cell)})})}
+      resolve({sheets:o,name:f.name,ext:(f.name.split(".").pop()||"DATA").toUpperCase()});
+    }catch(e){reject(new Error(e.message||"อ่านไฟล์ไม่ได้ (ไฟล์อาจเสีย)"))}};
+    r.readAsArrayBuffer(f);
+  });
+}
 function handle(f){
   if(!f)return;$("err").textContent="";
   if(BUSY){fail("กำลังประมวลผลไฟล์ก่อนหน้า รอสักครู่");return}
-  var n=f.name.toLowerCase(),pdf=/\.pdf$/.test(n);
-  if(/\.(png|jpe?g|gif|webp|bmp|heic)$/.test(n)||(f.type||"").indexOf("image/")===0){
-    fail("หน้านี้อ่านข้อความจากรูปภาพไม่ได้ ให้ส่งรูปให้ Claude ในแชตเพื่อแปลงเป็นตาราง แล้วนำไฟล์ที่ได้มาอัปโหลดที่นี่");return}
-  if(!/\.(xlsx|xls|csv|pdf)$/.test(n)){fail("รองรับเฉพาะไฟล์ .xlsx .xls .csv .pdf");return}
-  if(!f.size){fail("ไฟล์ว่าง (0 ไบต์)");return}
-  if(f.size>MAXB){fail("ไฟล์ใหญ่เกิน 50 MB");return}
-  if(pdf?typeof pdfjsLib==="undefined":typeof XLSX==="undefined"){fail("โหลดตัวอ่านไฟล์ไม่สำเร็จ ตรวจอินเทอร์เน็ตแล้วรีเฟรชหน้า");return}
+  if(isImageFile(f)){openOcrModal(f);return}
   var my=++TOK;busy(1,f.name);
-  var r=new FileReader();
-  r.onerror=function(){busy(0);fail("อ่านไฟล์ไม่ได้")};
-  r.onload=async function(){try{
-    var o;
-    if(pdf)o=await readPdf(new Uint8Array(r.result));
-    else{var wb=XLSX.read(new Uint8Array(r.result),{type:"array",cellDates:true,cellNF:true,dateNF:"dd/mm/yyyy"});o={};
-      wb.SheetNames.forEach(function(k,i){var m=wb.Workbook&&wb.Workbook.Sheets&&wb.Workbook.Sheets[i];if(m&&m.Hidden)return;
-        o[k]=XLSX.utils.sheet_to_json(wb.Sheets[k],{header:1,defval:"",raw:false,dateNF:"dd/mm/yyyy"}).map(function(x){return x.map(cell)})})}
+  parseChecklistFile(f).then(function(res){
     if(my!==TOK)return;
-    setSheets(o,{name:f.name,ext:(f.name.split(".").pop()||"DATA").toUpperCase()});busy(0);$("err").textContent="";
-  }catch(e){busy(0);fail(e.message||"อ่านไฟล์ไม่ได้ (ไฟล์อาจเสีย)")}};
-  r.readAsArrayBuffer(f);
+    setSheets(res.sheets,{name:res.name,ext:res.ext});busy(0);$("err").textContent="";
+  }).catch(function(e){
+    if(my!==TOK)return;
+    busy(0);fail(e.message||"อ่านไฟล์ไม่ได้");
+  });
 }
+
+/* === Phase 3A: File Diff / Reconcile Mode === */
+var DIFF={otherName:"",otherRaw:[],otherHr:0,otherHeaders:[],otherRows:[],curCol:0,otherCol:0,tab:"added",result:null};
+function diffNormKey(v){return cell(v).replace(/\s+/g," ").toLowerCase()}
+function computeDiff(curRows,otherRows,curColIdx,otherColIdx){
+  var curSeen={},otherSeen={},matched=[],added=[],removed=[];
+  curRows.forEach(function(r,k){
+    var key=diffNormKey(r[curColIdx]);
+    if(!key)return;
+    if(!curSeen[key])curSeen[key]=[];
+    curSeen[key].push({k:k,row:r});
+  });
+  otherRows.forEach(function(r,idx){
+    var key=diffNormKey(r[otherColIdx]);
+    if(!key)return;
+    if(!otherSeen[key])otherSeen[key]={idx:idx,row:r};
+  });
+  curRows.forEach(function(r,k){
+    var key=diffNormKey(r[curColIdx]);
+    var lbl=cell(r[curColIdx])||lab(r,k);
+    if(!key)return;
+    if(otherSeen[key])matched.push({key:key,label:lbl,k:k,curRow:r,otherRow:otherSeen[key].row});
+    else removed.push({key:key,label:lbl,k:k,row:r});
+  });
+  var seenAdded={};
+  otherRows.forEach(function(r){
+    var key=diffNormKey(r[otherColIdx]);
+    if(!key||curSeen[key]||seenAdded[key])return;
+    seenAdded[key]=true;
+    added.push({key:key,label:cell(r[otherColIdx]),row:r});
+  });
+  return{matched:matched,added:added,removed:removed};
+}
+function loadDiffSource(name,rawRows,hrGuess){
+  DIFF.otherName=name;
+  DIFF.otherRaw=Array.isArray(rawRows)?rawRows:[];
+  var hr=Math.max(0,Math.min(DIFF.otherRaw.length-1,hrGuess||0));
+  DIFF.otherHr=hr;
+  DIFF.otherHeaders=DIFF.otherRaw[hr]||[];
+  DIFF.otherRows=DIFF.otherRaw.slice(hr+1).filter(function(r){return Array.isArray(r)&&r.some(cell)});
+  var curHdr=diffNormKey(HN[DIFF.curCol]||"");
+  var autoOc=0;
+  DIFF.otherHeaders.forEach(function(h,i){if(curHdr&&diffNormKey(h)===curHdr)autoOc=i});
+  DIFF.otherCol=autoOc;
+  $("diff-ocol").innerHTML=DIFF.otherHeaders.map(function(h,i){
+    return'<option value="'+i+'">'+(esc(cell(h))||("คอลัมน์ "+(i+1)))+'</option>';
+  }).join("")||'<option value="0">คอลัมน์ 1</option>';
+  $("diff-ocol").value=String(DIFF.otherCol);
+  runDiff();
+}
+function runDiff(){
+  if(!DIFF.otherRows.length&&!DIFF.otherName){
+    $("diff-res").classList.add("hide");$("diff-empty").classList.remove("hide");return;
+  }
+  DIFF.curCol=parseInt($("diff-col").value,10)||0;
+  DIFF.otherCol=parseInt($("diff-ocol").value,10)||0;
+  DIFF.result=computeDiff(D,DIFF.otherRows,DIFF.curCol,DIFF.otherCol);
+  $("diff-empty").classList.add("hide");
+  $("diff-res").classList.remove("hide");
+  $("diff-meta").textContent="เทียบ \""+(FNAME||CUR||"ชีตปัจจุบัน")+"\" ("+D.length+" แถว) กับ \""+DIFF.otherName+"\" ("+DIFF.otherRows.length+" แถว)";
+  $("diff-m-cnt").textContent=DIFF.result.matched.length;
+  $("diff-a-cnt").textContent=DIFF.result.added.length;
+  $("diff-r-cnt").textContent=DIFF.result.removed.length;
+  $("diff-import").disabled=!DIFF.result.added.length;
+  renderDiffList();
+}
+function renderDiffList(){
+  if(!DIFF.result)return;
+  document.querySelectorAll("#diff-tabs .diff-tab").forEach(function(b){
+    b.classList.toggle("on",b.dataset.dt===DIFF.tab);
+  });
+  var arr=DIFF.result[DIFF.tab]||[];
+  var badgeCls=DIFF.tab==="added"?"add":DIFF.tab==="removed"?"rem":"match";
+  var badgeTxt=DIFF.tab==="added"?"ใหม่":DIFF.tab==="removed"?"ไม่มีในไฟล์เทียบ":"ตรงกัน";
+  if(!arr.length){
+    $("diff-list").innerHTML='<div class="dp" style="padding:16px;text-align:center">ไม่มีรายการในหมวดนี้</div>';
+    return;
+  }
+  $("diff-list").innerHTML=arr.slice(0,200).map(function(it,idx){
+    return'<div class="diff-row"><span class="diff-row-lbl">'+(idx+1)+'. '+esc(it.label)+'</span><span class="diff-badge '+badgeCls+'">'+badgeTxt+'</span></div>';
+  }).join("")+(arr.length>200?'<div class="dp" style="padding:8px 12px;text-align:center">แสดง 200 จาก '+arr.length+' รายการ</div>':"");
+}
+function importAddedRows(){
+  if(!DIFF.result||!DIFF.result.added.length)return 0;
+  var maxW=C.length?Math.max.apply(null,C)+1:1;
+  var colMap={};
+  C.forEach(function(ci){
+    var hn=diffNormKey(HN[ci]||"");
+    var oi=-1;
+    DIFF.otherHeaders.forEach(function(oh,idx){if(oi<0&&hn&&diffNormKey(oh)===hn)oi=idx});
+    colMap[ci]=oi;
+  });
+  var addedCount=0;
+  DIFF.result.added.forEach(function(it){
+    var nr=[];
+    for(var j=0;j<maxW;j++)nr.push("");
+    C.forEach(function(ci){
+      var oi=colMap[ci];
+      if(oi>=0&&it.row[oi]!=null)nr[ci]=cell(it.row[oi]);
+      else if(ci===DIFF.curCol)nr[ci]=cell(it.row[DIFF.otherCol]);
+      else if(it.row[ci]!=null)nr[ci]=cell(it.row[ci]);
+    });
+    SH[CUR].push(nr);
+    addedCount++;
+  });
+  RAW=SH[CUR];
+  full();
+  save();
+  runDiff();
+  say("นำเข้า "+addedCount+" รายการใหม่เข้าชีตนี้แล้ว (คงสถานะการติ๊กเดิม)");
+  return addedCount;
+}
+function openDiffModal(){
+  DIFF.curCol=(LC&&LC.length)?LC[0]:(C[0]||0);
+  $("diff-col").innerHTML=C.map(function(ci){
+    return'<option value="'+ci+'">'+esc(HN[ci]||("คอลัมน์ "+(ci+1)))+'</option>';
+  }).join("");
+  $("diff-col").value=String(DIFF.curCol);
+  var histOpts=['<option value="">— เลือกไฟล์จากประวัติ —</option>'];
+  HIST.forEach(function(it){
+    if(it&&it.sh&&Object.keys(it.sh).length){
+      var lbl=it.name||it.cur||"ไฟล์เดิม";
+      if(it.id===FILE_ID)lbl+=" (ไฟล์ปัจจุบัน)";
+      histOpts.push('<option value="'+esc(it.id)+'">'+esc(lbl)+'</option>');
+    }
+  });
+  $("diff-hist-sel").innerHTML=histOpts.join("");
+  if(DIFF.result)runDiff();
+  else{$("diff-res").classList.add("hide");$("diff-empty").classList.remove("hide")}
+  if($("diffdlg").showModal)$("diffdlg").showModal();
+}
+$("diff-btn").addEventListener("click",openDiffModal);
+$("diffx").addEventListener("click",function(){$("diffdlg").close()});
+$("diff-pick-btn").addEventListener("click",function(){$("diff-file").click()});
+$("diff-file").addEventListener("change",function(e){
+  var f=e.target.files[0];if(!f)return;
+  parseChecklistFile(f).then(function(res){
+    var firstSh=Object.keys(res.sheets)[0];
+    if(!firstSh)return;
+    var rows=res.sheets[firstSh];
+    var hGuess=0;
+    for(var i=0;i<Math.min(10,rows.length);i++){if(rows[i].filter(cell).length>1){hGuess=i;break}}
+    $("diff-hist-sel").value="";
+    loadDiffSource(res.name+" ("+firstSh+")",rows,hGuess);
+  }).catch(function(err){say(err.message||"อ่านไฟล์เทียบไม่ได้")});
+  this.value="";
+});
+$("diff-hist-sel").addEventListener("change",function(){
+  var id=this.value;if(!id)return;
+  var it=HIST.filter(function(x){return x.id===id})[0];
+  if(!it||!it.sh)return;
+  var shName=it.cur&&it.sh[it.cur]?it.cur:Object.keys(it.sh)[0];
+  var st=(it.st&&it.st[shName])?it.st[shName]:{};
+  loadDiffSource((it.name||shName)+" ["+shName+"]",it.sh[shName],st.h||0);
+});
+$("diff-col").addEventListener("change",runDiff);
+$("diff-ocol").addEventListener("change",runDiff);
+$("diff-tabs").addEventListener("click",function(e){
+  var b=e.target.closest("[data-dt]");if(!b)return;
+  DIFF.tab=b.dataset.dt;
+  renderDiffList();
+});
+$("diff-import").addEventListener("click",importAddedRows);
+$("diff-copy").addEventListener("click",function(){
+  if(!DIFF.result)return;
+  var txt="สรุปเทียบไฟล์: "+(FNAME||CUR)+" vs "+DIFF.otherName+
+    "\nตรงกัน: "+DIFF.result.matched.length+" | เพิ่มใหม่: "+DIFF.result.added.length+" | หายไป: "+DIFF.result.removed.length+
+    "\n\nเพิ่มใหม่ ("+DIFF.result.added.length+")\n"+DIFF.result.added.map(function(x,i){return(i+1)+". "+x.label}).join("\n")+
+    "\n\nหายไป ("+DIFF.result.removed.length+")\n"+DIFF.result.removed.map(function(x,i){return(i+1)+". "+x.label}).join("\n");
+  try{navigator.clipboard.writeText(txt).then(function(){say("คัดลอกสรุปผลต่างแล้ว")},function(){say("คัดลอกไม่ได้")})}catch(e){say("คัดลอกไม่ได้")}
+});
+
+/* === Phase 3B: Client-Side OCR (Lazy-loaded Tesseract.js) === */
+var OCR_LOAD_PROMISE=null,OCR_FILE_NAME="";
+function loadTesseract(){
+  if(typeof window.Tesseract!=="undefined")return Promise.resolve(window.Tesseract);
+  if(OCR_LOAD_PROMISE)return OCR_LOAD_PROMISE;
+  OCR_LOAD_PROMISE=new Promise(function(resolve,reject){
+    var sc=document.createElement("script");
+    sc.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+    sc.async=true;
+    sc.onload=function(){
+      if(typeof window.Tesseract!=="undefined")resolve(window.Tesseract);
+      else{OCR_LOAD_PROMISE=null;reject(new Error("โหลด Tesseract.js ไม่สำเร็จ"))}
+    };
+    sc.onerror=function(){OCR_LOAD_PROMISE=null;reject(new Error("โหลด Tesseract.js ไม่สำเร็จ (ตรวจอินเทอร์เน็ต)"))};
+    document.head.appendChild(sc);
+  });
+  return OCR_LOAD_PROMISE;
+}
+function ocrTextToRows(text){
+  var lines=String(text||"").split(/\r?\n/).map(function(l){
+    return l.replace(/^\s*(?:[-*•]+|\[[ xX]?\])\s+/,"").trim();
+  }).filter(Boolean);
+  var out=[["รายการ"]];
+  lines.forEach(function(l){out.push([l])});
+  return out;
+}
+async function runOcr(file){
+  if(!file)return;
+  OCR_FILE_NAME=file.name.replace(/\.[^.]+$/,"");
+  $("ocr-fname").textContent=file.name;
+  $("ocr-err").textContent="";
+  $("ocr-prog").classList.remove("hide");
+  $("ocr-st").textContent="กำลังโหลดเอนจิน OCR (ครั้งแรกอาจใช้เวลาสักครู่)…";
+  $("ocr-pct").textContent="0%";
+  $("ocr-bar").style.width="0%";
+  try{
+    var TLib=await loadTesseract();
+    var lang=$("ocr-lang").value||"tha+eng";
+    var res=await TLib.recognize(file,lang,{
+      logger:function(m){
+        if(!m)return;
+        if(m.status)$("ocr-st").textContent=m.status==="recognizing text"?"กำลังอ่านข้อความจากภาพ…":m.status;
+        if(typeof m.progress==="number"){
+          var p=Math.round(m.progress*100);
+          $("ocr-pct").textContent=p+"%";
+          $("ocr-bar").style.width=p+"%";
+        }
+      }
+    });
+    var txt=(res&&res.data&&res.data.text)||"";
+    $("ocr-text").value=txt.split(/\r?\n/).map(function(x){return x.trim()}).filter(Boolean).join("\n");
+    $("ocr-st").textContent="อ่านข้อความเสร็จสิ้น";
+    $("ocr-pct").textContent="100%";
+    $("ocr-bar").style.width="100%";
+  }catch(e){
+    $("ocr-err").textContent=e.message||"ไม่สามารถอ่านข้อความจากรูปภาพได้";
+    $("ocr-prog").classList.add("hide");
+  }
+}
+function openOcrModal(file){
+  $("ocr-err").textContent="";
+  if(!file){$("ocr-prog").classList.add("hide")}
+  if($("ocrdlg").showModal)$("ocrdlg").showModal();
+  if(file)runOcr(file);
+}
+$("ocr-btn").addEventListener("click",function(){openOcrModal(null)});
+$("ocrx").addEventListener("click",function(){$("ocrdlg").close()});
+$("ocr-pick-btn").addEventListener("click",function(){$("ocr-file").click()});
+$("ocr-file").addEventListener("change",function(e){if(e.target.files[0])runOcr(e.target.files[0]);this.value=""});
+$("ocr-clr").addEventListener("click",function(){$("ocr-text").value="";$("ocr-err").textContent=""});
+$("ocr-make").addEventListener("click",function(){
+  var rows=ocrTextToRows($("ocr-text").value);
+  if(rows.length<=1){$("ocr-err").textContent="กรุณาสแกนรูปภาพหรือพิมพ์ข้อความอย่างน้อย 1 บรรทัด";return}
+  $("ocrdlg").close();
+  setSheets({"OCR":rows},{name:(OCR_FILE_NAME||"OCR_Scan")+".ocr",ext:"OCR"});
+  say("สร้างเช็คลิสต์จากผล OCR ("+(rows.length-1)+" รายการ) แล้ว");
+});
 $("drop").addEventListener("click",function(){$("file").click()});
 $("file").addEventListener("change",function(e){handle(e.target.files[0])});
 $("drop").addEventListener("dragover",function(e){e.preventDefault();this.classList.add("on")});
