@@ -1874,6 +1874,9 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
     </div>
     <div class="ocr-drop-row">
       <button id="ocr-btn" type="button" title="สแกนรายชื่อจากรูปภาพด้วย OCR ในเบราว์เซอร์ (โหลดเมื่อใช้งานเท่านั้น)">สแกนรูปภาพเป็นเช็คลิสต์ (OCR)</button>
+      <button id="ocr-snap-btn" type="button" title="เปิดกล้องมือถือถ่ายภาพเพื่อสแกนเป็นเช็คลิสต์ทันที">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>ถ่ายรูปสแกน (กล้องมือถือ)
+      </button>
     </div>
     <div id="err" class="no" role="alert"></div>
     <div id="hist-up" class="hist-wrap hide">
@@ -2238,7 +2241,11 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
         </select>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
       </span>
-      <button type="button" id="ocr-pick-btn" class="p">เลือกรูปภาพ (.png/.jpg/.webp)</button>
+      <button type="button" id="ocr-cam-btn" class="p" title="เปิดกล้องมือถือถ่ายภาพเพื่อสแกนข้อความ">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>ถ่ายรูปจากกล้อง
+      </button>
+      <button type="button" id="ocr-pick-btn">เลือกรูปภาพ (.png/.jpg/.webp)</button>
+      <input type="file" id="ocr-cam-file" accept="image/*" capture="environment" class="hide">
       <input type="file" id="ocr-file" accept="image/*" class="hide">
       <span id="ocr-fname" class="dp"></span>
     </div>
@@ -4080,7 +4087,16 @@ function openOcrModal(file){
   if(file)runOcr(file);
 }
 $("ocr-btn").addEventListener("click",function(){openOcrModal(null)});
+$("ocr-snap-btn").addEventListener("click",function(){$("ocr-cam-file").click()});
 $("ocrx").addEventListener("click",function(){$("ocrdlg").close()});
+$("ocr-cam-btn").addEventListener("click",function(){$("ocr-cam-file").click()});
+$("ocr-cam-file").addEventListener("change",function(e){
+  var f=e.target.files[0];
+  this.value="";
+  if(!f)return;
+  if($("ocrdlg").open)runOcr(f);
+  else openOcrModal(f);
+});
 $("ocr-pick-btn").addEventListener("click",function(){$("ocr-file").click()});
 $("ocr-file").addEventListener("change",function(e){if(e.target.files[0])runOcr(e.target.files[0]);this.value=""});
 $("ocr-clr").addEventListener("click",function(){$("ocr-text").value="";$("ocr-err").textContent=""});
