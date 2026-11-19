@@ -1619,6 +1619,193 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
   font:13px/1.6 var(--mono);
   resize:vertical;
 }
+/* Phase 4: Aside Export & Insights, Inline Camera Scanner, Workflow Templates */
+.exp-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-top:8px;
+}
+.exp-btn{
+  height:30px;
+  min-height:30px;
+  padding:0 6px;
+  font-size:12px;
+  justify-content:center;
+  background:var(--bg);
+  color:var(--t2);
+  border:1px solid var(--bd);
+}
+.exp-btn:hover{color:var(--t1);border-color:color-mix(in srgb,var(--t1) 35%,var(--bd))}
+.ins-box{margin-top:8px;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+.ins-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border:1px solid var(--bd);
+  border-radius:8px;
+  overflow:hidden;
+  background:var(--bg);
+}
+.ins-stat{padding:7px 9px;display:flex;flex-direction:column;gap:2px}
+.ins-stat+.ins-stat{border-left:1px solid var(--bd)}
+.ins-stat span{font-size:10.5px;color:var(--t2)}
+.ins-stat b{font-family:var(--mono);font-size:13px;font-variant-numeric:tabular-nums;color:var(--t1)}
+.ins-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:8px;
+  padding:5px 0;
+  border-bottom:1px solid var(--bd);
+  font-size:12px;
+}
+.ins-line:last-child{border-bottom:0}
+.ins-stuck{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  max-height:150px;
+  overflow-y:auto;
+}
+.ins-stuck-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:5px 8px;
+  border-radius:6px;
+  background:var(--ac-soft);
+  border:1px solid color-mix(in srgb,var(--ac) 25%,transparent);
+  font-size:12px;
+}
+.ins-stuck-lbl{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--t1);font-weight:500}
+.ins-stuck-age{flex:none;font-family:var(--mono);font-size:11px;color:var(--ac);font-weight:600}
+.rr-inp-wrap{position:relative;display:flex;align-items:center}
+.rr-inp-wrap .rr-inp{padding-right:42px}
+.rr-cam-btn{
+  position:absolute;
+  right:5px;
+  top:50%;
+  transform:translateY(-50%);
+  width:30px;
+  height:30px;
+  min-height:30px;
+  padding:0;
+  border-radius:6px;
+  border:1px solid transparent;
+  background:transparent;
+  color:var(--t2);
+  justify-content:center;
+}
+.rr-cam-btn:hover{background:var(--s2);color:var(--t1);border-color:var(--bd)}
+.rr-cam-btn[aria-pressed="true"]{background:var(--pr);color:var(--pr-ink);border-color:var(--pr)}
+.rr-cam-btn[aria-pressed="true"]:hover{background:var(--prh);color:var(--pr-ink);border-color:var(--prh)}
+.rr-cam-box{
+  position:relative;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  overflow:hidden;
+  background:#09090b;
+  transition:border-color .18s ease;
+}
+.rr-cam-box.hit{border-color:var(--ok);box-shadow:0 0 0 2px var(--ok-bd)}
+.rr-cam-vid{
+  display:block;
+  width:100%;
+  max-height:210px;
+  object-fit:cover;
+  background:#09090b;
+}
+.rr-cam-guide{
+  position:absolute;
+  inset:18% 16% 28% 16%;
+  border:1.5px solid rgba(255,255,255,.78);
+  border-radius:8px;
+  pointer-events:none;
+}
+.rr-cam-bar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  padding:7px 10px;
+  background:var(--sf);
+  border-top:1px solid var(--bd);
+  font-size:12px;
+  color:var(--t2);
+}
+.wf-tpl-box{
+  border-top:1px solid var(--bd);
+  padding-top:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.wf-tpl-list{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+.wf-tpl-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  border:1px solid var(--bd);
+  border-radius:7px;
+  background:var(--bg);
+  padding:2px 4px 2px 9px;
+  font-size:12px;
+}
+.wf-tpl-chip.on{
+  border-color:var(--pr);
+  background:color-mix(in srgb,var(--pr) 8%,var(--sf));
+}
+.wf-tpl-use{
+  height:24px;
+  min-height:24px;
+  padding:0 4px 0 0;
+  border:0;
+  background:transparent;
+  color:var(--t1);
+  font-size:12px;
+  font-weight:500;
+}
+.wf-tpl-use:hover{background:transparent;border:0;text-decoration:underline}
+.wf-tpl-cnt{font-family:var(--mono);font-size:10.5px;color:var(--t2)}
+.wf-tpl-del{
+  width:20px;
+  height:20px;
+  min-height:20px;
+  padding:0;
+  border:0;
+  border-radius:4px;
+  background:transparent;
+  color:var(--t2);
+  font-size:11px;
+  justify-content:center;
+}
+.wf-tpl-del:hover{background:var(--s2);color:var(--no);border:0}
+.wf-tpl-save{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+.wf-tpl-save .sync-inp{flex:1;height:32px;font-size:12.5px}
+@media print{
+  body{background:#fff!important;color:#111!important}
+  .hd,.tb,#wf-fbar,.sm,#nw,#toast,dialog,.rm-btn,#more,#up{display:none!important}
+  .mn{max-width:none;padding:0}
+  .gr{display:block}
+  .cd{border:0;box-shadow:none;background:#fff!important;padding:0}
+  .kp{grid-template-columns:repeat(4,1fr)!important;gap:8px;margin-bottom:14px}
+  .k{border:1px solid #d4d4d8!important;background:#fff!important;padding:8px 10px!important}
+  .tw{overflow:visible!important;max-height:none!important}
+  table{font-size:11px;border-collapse:collapse}
+  th,td{border:1px solid #d4d4d8!important;padding:5px 7px!important}
+  tr{break-inside:avoid}
+  .wf-pill{border:1px solid #999!important;background:#fff!important;color:#111!important;padding:1px 5px!important}
+  .wf-pill.on{background:#ecfdf5!important;border-color:#059669!important;font-weight:700}
+}
 @media(max-width:440px){
   .sync-btns{grid-template-columns:1fr}
   .wf-presets{grid-template-columns:1fr}
@@ -1758,6 +1945,11 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
           <p class="dp" id="sp"></p>
           <div id="done" class="dn hide">ตรวจสอบครบทุกรายการแล้ว</div>
           <button id="cp" class="p" type="button">คัดลอกสรุป</button>
+          <div class="exp-row" role="group" aria-label="ส่งออกรายงาน">
+            <button id="exp-xlsx" class="exp-btn" type="button" title="ดาวน์โหลดไฟล์ Excel (.xlsx) พร้อมสถานะและเวลา">Excel</button>
+            <button id="exp-csv" class="exp-btn" type="button" title="ดาวน์โหลดไฟล์ CSV (รองรับภาษาไทยใน Excel)">CSV</button>
+            <button id="exp-pdf" class="exp-btn" type="button" title="พิมพ์หรือบันทึกเป็น PDF">พิมพ์ / PDF</button>
+          </div>
           <details class="ls" open>
             <summary>ยังไม่ได้ตรวจ (<span id="nu">0</span>)</summary>
             <ol id="lu2"></ol>
@@ -1765,6 +1957,10 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
           <details class="ls">
             <summary>ตรวจแล้ว (<span id="nc">0</span>)</summary>
             <ol id="lc2"></ol>
+          </details>
+          <details class="ls" id="ins-acc">
+            <summary>สถิติเวลา &amp; คอขวด (<span id="ins-cnt">0</span>)</summary>
+            <div id="ins-body" class="ins-box"></div>
           </details>
           <textarea id="ta" class="hide" readonly rows="8"></textarea>
         </details>
@@ -1871,6 +2067,14 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
       <input type="checkbox" id="wf-meta-tgl">
       <span>แสดงปุ่มแท็ก & หมายเหตุรายแถว</span>
     </label>
+    <div id="wf-tpl-box" class="wf-tpl-box">
+      <div class="dp">เทมเพลตส่วนตัว (ซิงค์ข้ามอุปกรณ์ผ่าน Gist)</div>
+      <div id="wf-tpl-list" class="wf-tpl-list"></div>
+      <div class="wf-tpl-save">
+        <input type="text" id="wf-tpl-name" class="sync-inp" maxlength="40" placeholder="ตั้งชื่อเทมเพลตเพื่อบันทึกชุดขั้นตอนนี้...">
+        <button type="button" id="wf-tpl-save" style="height:32px;min-height:32px;font-size:12px">บันทึกเทมเพลต</button>
+      </div>
+    </div>
     <button id="wf-apply" class="p" type="button">บันทึกการตั้งค่า</button>
   </div>
 </dialog>
@@ -1921,7 +2125,20 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
         <span>กด Enter ติ๊กทันที</span>
       </label>
     </div>
-    <input id="rr-q" class="rr-inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="พิมพ์ชื่อ, รหัส, เลขลำดับ หรือสแกนบาร์โค้ด แล้วกด Enter...">
+    <div class="rr-inp-wrap">
+      <input id="rr-q" class="rr-inp" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="พิมพ์ชื่อ, รหัส, เลขลำดับ หรือสแกนบาร์โค้ด แล้วกด Enter...">
+      <button type="button" id="rr-cam-btn" class="rr-cam-btn" aria-label="เปิดกล้องสแกน QR / บาร์โค้ด" title="เปิด/ปิดกล้องสแกน QR / บาร์โค้ด" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7V5a1 1 0 0 1 1-1h2"/><path d="M17 4h2a1 1 0 0 1 1 1v2"/><path d="M20 17v2a1 1 0 0 1-1 1h-2"/><path d="M7 20H5a1 1 0 0 1-1-1v-2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+      </button>
+    </div>
+    <div id="rr-cam-box" class="rr-cam-box hide">
+      <video id="rr-cam-vid" class="rr-cam-vid" playsinline muted autoplay></video>
+      <div class="rr-cam-guide" aria-hidden="true"></div>
+      <div class="rr-cam-bar">
+        <span id="rr-cam-msg">กำลังเปิดกล้อง…</span>
+        <button type="button" id="rr-cam-stop" style="height:24px;min-height:24px;padding:0 8px;font-size:11.5px">ปิดกล้อง</button>
+      </div>
+    </div>
     <div id="rr-status" class="rr-status">พร้อมรับข้อมูล — พิมพ์ค้นหาหรือสแกนเพื่อทำรายการ</div>
     <div id="rr-list" class="rr-list"></div>
     <div id="rr-log-wrap" class="hide">
@@ -2030,6 +2247,15 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
 <script>
 var RAW=[],HR=0,LC=[],S={},F="all",KEY="att:v2",LIM=500,SHOWN=500,HY=[],BUSY=0,TOK=0,SH={},CUR="",ST={},T="",U="",C=[],HN={},D=[];
 var FILE_ID="",FNAME="",FEXT="",HIST=[],DEL={},SYNC={token:"",gistId:"",user:"",lastSyncAt:0},HKEY="att:hist:v1",DKEY="att:del:v1",SKEY="att:sync:v1",MAX_HIST=15,SYNC_TM=null,SYNC_BUSY=0,LAST_PULL=0;
+var WF_TPLS=[],TPL_DEL={},TKEY="att:tpl:v1",TDKEY="att:tdel:v1",MAX_TPL=30;
+function loadTemplates(){
+  try{var t=rj(TKEY);if(Array.isArray(t))WF_TPLS=t.filter(function(x){return x&&x.id&&x.name&&Array.isArray(x.steps)&&x.steps.length}).slice(0,MAX_TPL)}catch(e){}
+  try{var d=rj(TDKEY);if(d&&typeof d==="object")TPL_DEL=d}catch(e){}
+}
+function saveTemplates(){
+  try{localStorage.setItem(TKEY,JSON.stringify(WF_TPLS.slice(0,MAX_TPL)))}catch(e){}
+  try{localStorage.setItem(TDKEY,JSON.stringify(TPL_DEL))}catch(e){}
+}
 var WF_PRESETS={
   single:{id:"single",name:"เช็ค 1 ขั้น (ค่าเริ่มต้น)",desc:"เช็คชื่อ / ตรวจรายการแบบ 1 ช่องเหมือนเดิม",steps:[{id:"step_1",label:"ตรวจสอบแล้ว"}]},
   two_step_return:{id:"two_step_return",name:"2 ขั้น: เข้างาน / คืนป้าย",desc:"เช็คอินรับป้ายชื่อ และเช็คคืนป้ายตอนกลับ",steps:[{id:"step_1",label:"เข้าอบรม / รับป้าย"},{id:"step_2",label:"คืนป้ายชื่อ"}]},
@@ -2318,6 +2544,191 @@ function summary(){
   }else{ws.classList.add("hide");ws.innerHTML=""}
   $("lc2").innerHTML=li(a)||'<span class="dp">ยังไม่มี</span>';
   $("lu2").innerHTML=li(b)||'<span class="dp">เช็คครบทุกรายการแล้ว</span>';
+  renderInsights();
+}
+
+/* === Phase 4A: Aside Rich Export (Excel / CSV / Print PDF) === */
+function buildExportRows(){
+  var multi=isMultiWf();
+  var hdr=["#"].concat(C.map(function(ci){return HN[ci]||("คอลัมน์ "+(ci+1))})).concat(["สถานะรวม"]);
+  if(multi){
+    WF.steps.forEach(function(st){hdr.push(st.label,"เวลา: "+st.label)});
+  }else{
+    hdr.push("เวลาที่ตรวจสอบ");
+  }
+  hdr.push("แท็ก","หมายเหตุ");
+  var rows=[hdr];
+  D.forEach(function(r,k){
+    var rd=getRowData(k);
+    var done=isRowDone(k),part=isRowPartial(k);
+    var stText=done?"ตรวจแล้ว":part?("บางส่วน ("+rowDoneCount(k)+"/"+WF.steps.length+")"):"ยังไม่ตรวจ";
+    var line=[String(k+1)].concat(C.map(function(ci){return cell(r[ci])})).concat([stText]);
+    if(multi){
+      WF.steps.forEach(function(st){
+        var stObj=rd&&rd.steps&&rd.steps[st.id];
+        var ok=!!(stObj&&stObj.checked);
+        var ts=(ok&&stObj.timestamp)?fmtAbs(Date.parse(stObj.timestamp)):"";
+        line.push(ok?"✓":"-",ts);
+      });
+    }else{
+      var s1=WF&&WF.steps&&WF.steps[0]?WF.steps[0].id:"step_1";
+      var st1=rd&&rd.steps&&rd.steps[s1];
+      line.push((st1&&st1.checked&&st1.timestamp)?fmtAbs(Date.parse(st1.timestamp)):"");
+    }
+    var tag=(rd&&rd.statusTag&&rd.statusTag!=="normal")?(TAG_LABELS[rd.statusTag]||rd.statusTag):"";
+    line.push(tag,(rd&&rd.note)||"");
+    rows.push(line);
+  });
+  return rows;
+}
+function csvEscape(v){
+  var s=String(v==null?"":v);
+  return/[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
+}
+function exportBaseName(){
+  var raw=(FNAME||T||CUR||"foliocheck").replace(/\.[^.]+$/,"").replace(/[\\/:*?"<>|]+/g,"_").trim();
+  return(raw||"foliocheck")+"_checked";
+}
+function triggerDownload(blob,filename){
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url)},1500);
+}
+function exportChecklist(fmt){
+  if(!D.length){say("ยังไม่มีข้อมูลสำหรับส่งออก");return}
+  if(fmt==="pdf"){
+    var prevShown=SHOWN;
+    if(D.length>SHOWN){SHOWN=D.length;render()}
+    window.print();
+    if(prevShown!==SHOWN){SHOWN=prevShown;render()}
+    return;
+  }
+  var rows=buildExportRows();
+  var base=exportBaseName();
+  if(fmt==="xlsx"){
+    if(typeof window.XLSX!=="undefined"&&XLSX.utils&&XLSX.writeFile){
+      var wb=XLSX.utils.book_new();
+      var ws=XLSX.utils.aoa_to_sheet(rows);
+      var shName=(CUR||"Checklist").replace(/[\\/?*[\]:]/g,"_").slice(0,31)||"Checklist";
+      XLSX.utils.book_append_sheet(wb,ws,shName);
+      XLSX.writeFile(wb,base+".xlsx");
+      say("ส่งออกไฟล์ "+base+".xlsx แล้ว");
+      return;
+    }
+    say("ไม่พบตัวสร้าง Excel — ส่งออกเป็น CSV แทน");
+    fmt="csv";
+  }
+  var csv="\uFEFF"+rows.map(function(r){return r.map(csvEscape).join(",")}).join("\r\n");
+  triggerDownload(new Blob([csv],{type:"text/csv;charset=utf-8"}),base+".csv");
+  say("ส่งออกไฟล์ "+base+".csv แล้ว");
+}
+$("exp-xlsx").addEventListener("click",function(){exportChecklist("xlsx")});
+$("exp-csv").addEventListener("click",function(){exportChecklist("csv")});
+$("exp-pdf").addEventListener("click",function(){exportChecklist("pdf")});
+
+/* === Phase 4B: Aside Timeline & Bottleneck Insights === */
+function fmtDur(ms){
+  if(ms==null||isNaN(ms)||ms<0)return"-";
+  var sec=Math.floor(ms/1000);
+  if(sec<60)return sec+" วิ";
+  var min=Math.floor(sec/60);
+  if(min<60)return min+" นาที";
+  var hr=Math.floor(min/60),rm=min%60;
+  if(hr<24)return hr+" ชม."+(rm?(" "+rm+" น."):"");
+  var dy=Math.floor(hr/24),rh=hr%24;
+  return dy+" วัน"+(rh?(" "+rh+" ชม."):"");
+}
+function computeInsights(nowTs){
+  var now=nowTs||Date.now(),multi=isMultiWf();
+  var tsList=[],hourMap={},durations=[],stuck=[];
+  var firstId=WF&&WF.steps&&WF.steps[0]?WF.steps[0].id:"step_1";
+  var lastId=WF&&WF.steps&&WF.steps.length?WF.steps[WF.steps.length-1].id:firstId;
+  D.forEach(function(r,k){
+    var rd=getRowData(k);
+    if(!rd||!rd.steps)return;
+    var rowFirstTs=null;
+    WF.steps.forEach(function(st){
+      var so=rd.steps[st.id];
+      if(so&&so.checked&&so.timestamp){
+        var t=Date.parse(so.timestamp);
+        if(!isNaN(t)){
+          tsList.push(t);
+          var hh=new Date(t).getHours();
+          hourMap[hh]=(hourMap[hh]||0)+1;
+          if(rowFirstTs===null||t<rowFirstTs)rowFirstTs=t;
+        }
+      }
+    });
+    if(multi){
+      var s0=rd.steps[firstId],sN=rd.steps[lastId];
+      if(s0&&s0.checked&&s0.timestamp&&sN&&sN.checked&&sN.timestamp){
+        var t0=Date.parse(s0.timestamp),tN=Date.parse(sN.timestamp);
+        if(!isNaN(t0)&&!isNaN(tN)&&tN>=t0)durations.push(tN-t0);
+      }
+      if(isRowPartial(k)){
+        stuck.push({
+          k:k,
+          label:lab(r,k),
+          doneCount:rowDoneCount(k),
+          totalSteps:WF.steps.length,
+          firstTs:rowFirstTs,
+          ageMs:rowFirstTs?Math.max(0,now-rowFirstTs):null
+        });
+      }
+    }
+  });
+  stuck.sort(function(a,b){
+    if(a.firstTs==null&&b.firstTs==null)return a.k-b.k;
+    if(a.firstTs==null)return 1;
+    if(b.firstTs==null)return -1;
+    return a.firstTs-b.firstTs;
+  });
+  var avgCycleMs=durations.length?Math.round(durations.reduce(function(p,c){return p+c},0)/durations.length):null;
+  var peakH=-1,peakCnt=0;
+  Object.keys(hourMap).forEach(function(h){if(hourMap[h]>peakCnt){peakCnt=hourMap[h];peakH=+h}});
+  var pad2=function(n){return n<10?"0"+n:String(n)};
+  var peakLabel=peakH>=0?(pad2(peakH)+":00–"+pad2((peakH+1)%24)+":00 ("+peakCnt+")"):"-";
+  var bottleneckStep=null;
+  if(multi&&D.length){
+    var maxPending=0;
+    WF.steps.forEach(function(st,idx){
+      if(idx===0)return;
+      var prevSt=WF.steps[idx-1];
+      var pending=0;
+      D.forEach(function(_,k){if(getStepChecked(k,prevSt.id)&&!getStepChecked(k,st.id))pending++});
+      if(pending>maxPending){maxPending=pending;bottleneckStep={label:st.label,count:pending}}
+    });
+  }
+  return{tsCount:tsList.length,avgCycleMs:avgCycleMs,peakLabel:peakLabel,stuck:stuck,bottleneckStep:bottleneckStep};
+}
+function renderInsights(){
+  var body=$("ins-body"),cntEl=$("ins-cnt");
+  if(!body||!cntEl)return;
+  var multi=isMultiWf();
+  var ins=computeInsights();
+  cntEl.textContent=multi?ins.stuck.length:ins.tsCount;
+  if(!D.length||(!ins.tsCount&&!ins.stuck.length)){
+    body.innerHTML='<div class="dp">ยังไม่มีบันทึกเวลา (ระบบจะคำนวณอัตโนมัติเมื่อเริ่มติ๊กรายการ)</div>';
+    return;
+  }
+  var html='<div class="ins-grid">'+
+    '<div class="ins-stat"><span>ช่วงหนาแน่นสุด</span><b>'+esc(ins.peakLabel)+'</b></div>'+
+    '<div class="ins-stat"><span>'+(multi?"เวลาเฉลี่ยจบงาน":"บันทึกเวลาแล้ว")+'</span><b>'+(multi?esc(fmtDur(ins.avgCycleMs)):(ins.tsCount+" ครั้ง"))+'</b></div>'+
+  '</div>';
+  if(ins.bottleneckStep){
+    html+='<div class="ins-line"><span class="dp">คอขวดหลัก</span><strong>รอ '+esc(ins.bottleneckStep.label)+' ('+ins.bottleneckStep.count+')</strong></div>';
+  }
+  if(multi&&ins.stuck.length){
+    html+='<div class="dp" style="margin-top:2px">ค้างขั้นตอนกลาง (เรียงจากรอนานสุด)</div><div class="ins-stuck">'+
+      ins.stuck.slice(0,15).map(function(it){
+        var age=it.ageMs!=null?fmtDur(it.ageMs):(it.doneCount+"/"+it.totalSteps);
+        return'<div class="ins-stuck-item"><span class="ins-stuck-lbl">'+(it.k+1)+'. '+esc(it.label)+'</span><span class="ins-stuck-age">'+esc(age)+'</span></div>';
+      }).join("")+
+    '</div>';
+  }
+  body.innerHTML=html;
 }
 function full(){SHOWN=LIM;build();if(!LC.length||LC.some(function(i){return C.indexOf(i)<0}))LC=autoLC();shopts();chips();render()}
 
@@ -2529,7 +2940,7 @@ async function ghReq(path,opts){
   return res.json();
 }
 function buildSyncPayload(){
-  return{v:1,updatedAt:Date.now(),activeId:FILE_ID||"",deleted:DEL,files:HIST.slice(0,MAX_HIST)};
+  return{v:1,updatedAt:Date.now(),activeId:FILE_ID||"",deleted:DEL,files:HIST.slice(0,MAX_HIST),templates:WF_TPLS.slice(0,MAX_TPL),tplDeleted:TPL_DEL};
 }
 function mergeRemote(remote){
   if(!remote||typeof remote!=="object")return false;
@@ -2562,6 +2973,34 @@ function mergeRemote(remote){
   var merged=Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){return(b.updatedAt||0)-(a.updatedAt||0)}).slice(0,MAX_HIST);
   HIST=merged;
   saveHistStore();
+  // Merge saved workflow templates via existing Gist payload
+  var rTDel=(remote.tplDeleted&&typeof remote.tplDeleted==="object")?remote.tplDeleted:{};
+  Object.keys(rTDel).forEach(function(id){
+    if(!TPL_DEL[id]||rTDel[id]>TPL_DEL[id]){TPL_DEL[id]=rTDel[id];changed=true}
+  });
+  Object.keys(TPL_DEL).forEach(function(id){
+    if(!rTDel[id]||TPL_DEL[id]>rTDel[id])needPush=true;
+  });
+  var tMap={},tLocMap={};
+  WF_TPLS.forEach(function(t){if(t&&t.id){tLocMap[t.id]=t;tMap[t.id]=t}});
+  var rTpls=Array.isArray(remote.templates)?remote.templates:[];
+  rTpls.forEach(function(t){
+    if(!t||!t.id||!t.name||!Array.isArray(t.steps)||!t.steps.length)return;
+    var dt=TPL_DEL[t.id]||0;
+    if(dt&&dt>=(t.updatedAt||0))return;
+    var loc=tMap[t.id];
+    if(!loc||(t.updatedAt||0)>(loc.updatedAt||0)){tMap[t.id]=t;changed=true}
+    else if((loc.updatedAt||0)>(t.updatedAt||0))needPush=true;
+  });
+  Object.keys(tLocMap).forEach(function(id){
+    var dt=TPL_DEL[id]||0;
+    if(dt&&dt>=(tLocMap[id].updatedAt||0)){delete tMap[id];changed=true;return}
+    var inRemote=rTpls.some(function(r){return r&&r.id===id});
+    if(!inRemote)needPush=true;
+  });
+  WF_TPLS=Object.keys(tMap).map(function(k){return tMap[k]}).sort(function(a,b){return(b.updatedAt||0)-(a.updatedAt||0)}).slice(0,MAX_TPL);
+  saveTemplates();
+  if($("wfdlg")&&$("wfdlg").open&&typeof renderWfTemplates==="function")renderWfTemplates();
   // If active file was updated remotely, refresh workspace live
   if(FILE_ID){
     var dtCur=DEL[FILE_ID]||0;
@@ -2874,9 +3313,69 @@ function renderWfModal(){
     return'<div class="wf-step-row"><span class="wf-step-num">ขั้นที่ '+(idx+1)+'</span><input type="text" class="sync-inp" data-wfs="'+idx+'" value="'+esc(st.label)+'" maxlength="40"></div>';
   }).join("");
   $("wf-meta-tgl").checked=!!WF_DRAFT.showMeta;
+  renderWfTemplates();
 }
+function renderWfTemplates(){
+  var box=$("wf-tpl-list");if(!box)return;
+  if(!WF_TPLS.length){
+    box.innerHTML='<span class="dp" style="font-size:12px">ยังไม่มีเทมเพลตที่บันทึกไว้</span>';
+    return;
+  }
+  box.innerHTML=WF_TPLS.map(function(t){
+    return'<span class="wf-tpl-chip'+(WF_DRAFT&&WF_DRAFT.tplId===t.id?" on":"")+'">'+
+      '<button type="button" class="wf-tpl-use" data-tpluse="'+esc(t.id)+'">'+esc(t.name)+' <span class="wf-tpl-cnt">('+t.steps.length+' ขั้น)</span></button>'+
+      '<button type="button" class="wf-tpl-del" data-tpldel="'+esc(t.id)+'" aria-label="ลบเทมเพลต '+esc(t.name)+'" title="ลบเทมเพลต">✕</button>'+
+    '</span>';
+  }).join("");
+}
+$("wf-tpl-save").addEventListener("click",function(){
+  if(!WF_DRAFT)return;
+  syncDraftLabels();
+  var name=cell($("wf-tpl-name").value);
+  if(!name){say("กรุณาตั้งชื่อเทมเพลตก่อนบันทึก");$("wf-tpl-name").focus();return}
+  var now=Date.now();
+  var existing=WF_TPLS.filter(function(t){return t.name.toLowerCase()===name.toLowerCase()})[0];
+  if(existing){
+    existing.steps=clone(WF_DRAFT.steps);
+    existing.showMeta=!!$("wf-meta-tgl").checked;
+    existing.updatedAt=now;
+    WF_DRAFT.tplId=existing.id;
+  }else{
+    var tid="tpl_"+now.toString(36)+"_"+Math.random().toString(36).slice(2,5);
+    WF_TPLS.unshift({id:tid,name:name,steps:clone(WF_DRAFT.steps),showMeta:!!$("wf-meta-tgl").checked,updatedAt:now});
+    if(WF_TPLS.length>MAX_TPL)WF_TPLS.length=MAX_TPL;
+    WF_DRAFT.tplId=tid;
+  }
+  $("wf-tpl-name").value="";
+  saveTemplates();
+  scheduleSync();
+  renderWfTemplates();
+  say("บันทึกเทมเพลต \""+name+"\" แล้ว");
+});
+$("wf-tpl-list").addEventListener("click",function(e){
+  var delBtn=e.target.closest("[data-tpldel]");
+  if(delBtn){
+    var did=delBtn.dataset.tpldel;
+    WF_TPLS=WF_TPLS.filter(function(t){return t.id!==did});
+    TPL_DEL[did]=Date.now();
+    if(WF_DRAFT&&WF_DRAFT.tplId===did)WF_DRAFT.tplId="";
+    saveTemplates();scheduleSync();renderWfTemplates();
+    say("ลบเทมเพลตแล้ว");
+    return;
+  }
+  var useBtn=e.target.closest("[data-tpluse]");
+  if(!useBtn||!WF_DRAFT)return;
+  var tpl=WF_TPLS.filter(function(t){return t.id===useBtn.dataset.tpluse})[0];
+  if(!tpl)return;
+  WF_DRAFT.workflowPreset="custom";
+  WF_DRAFT.steps=clone(tpl.steps);
+  WF_DRAFT.showMeta=!!tpl.showMeta;
+  WF_DRAFT.tplId=tpl.id;
+  renderWfModal();
+  say("โหลดเทมเพลต \""+tpl.name+"\" แล้ว");
+});
 $("wf-btn").addEventListener("click",function(){
-  WF_DRAFT={workflowPreset:WF.workflowPreset||"single",steps:clone(WF.steps),showMeta:!!WF.showMeta};
+  WF_DRAFT={workflowPreset:WF.workflowPreset||"single",steps:clone(WF.steps),showMeta:!!WF.showMeta,tplId:""};
   renderWfModal();
   if($("wfdlg").showModal)$("wfdlg").showModal();
 });
@@ -2884,6 +3383,7 @@ $("wfx").addEventListener("click",function(){$("wfdlg").close()});
 $("wf-presets").addEventListener("click",function(e){
   var b=e.target.closest("[data-pid]");if(!b)return;
   var pid=b.dataset.pid;
+  WF_DRAFT.tplId="";
   if(pid==="custom"){
     WF_DRAFT.workflowPreset="custom";
     var n=WF_DRAFT.steps.length>=4?WF_DRAFT.steps.length:4;
@@ -3014,25 +3514,31 @@ function openRrModal(){
   if($("rrdlg").showModal)$("rrdlg").showModal();
   setTimeout(function(){$("rr-q").focus()},40);
 }
+function processRrQuery(qRaw,fromCam){
+  var q=(qRaw||"").trim();if(!q)return false;
+  var res=findRrMatches(q);
+  var targetK=res.exact.length===1?res.exact[0]:(res.list.length===1?res.list[0]:null);
+  if(targetK==null){
+    if(fromCam){$("rr-q").value=q;renderRr()}
+    setRrStatus(res.list.length?("พบ "+res.list.length+" รายการ กรุณาพิมพ์ให้เฉพาะเจาะจงหรือกดเลือกรายการด้านล่าง"):"ไม่พบรายการ \""+q+"\"","warn");
+    return false;
+  }
+  var sid=resolveRrStep(targetK);
+  execRr(targetK,sid,true);
+  $("rr-q").value="";
+  renderRr();
+  if(!fromCam)$("rr-q").focus();
+  return true;
+}
 $("rr-btn").addEventListener("click",openRrModal);
-$("rrx").addEventListener("click",function(){$("rrdlg").close()});
+$("rrx").addEventListener("click",function(){stopRrCam();$("rrdlg").close()});
+$("rrdlg").addEventListener("close",function(){stopRrCam()});
 $("rr-step").addEventListener("change",renderRr);
 $("rr-q").addEventListener("input",renderRr);
 $("rr-q").addEventListener("keydown",function(e){
   if(e.key!=="Enter"||!$("rr-auto").checked)return;
   e.preventDefault();
-  var q=this.value.trim();if(!q)return;
-  var res=findRrMatches(q);
-  var targetK=res.exact.length===1?res.exact[0]:(res.list.length===1?res.list[0]:null);
-  if(targetK==null){
-    setRrStatus(res.list.length?("พบ "+res.list.length+" รายการ กรุณาพิมพ์ให้เฉพาะเจาะจงหรือกดเลือกรายการด้านล่าง"):"ไม่พบรายการ \""+q+"\"","warn");
-    return;
-  }
-  var sid=resolveRrStep(targetK);
-  execRr(targetK,sid,true);
-  this.value="";
-  renderRr();
-  this.focus();
+  processRrQuery(this.value,false);
 });
 $("rr-list").addEventListener("click",function(e){
   var b=e.target.closest("[data-rrk]");if(!b)return;
@@ -3048,6 +3554,111 @@ $("rr-log").addEventListener("click",function(e){
   setRrStatus("ย้อนกลับรายการ "+it.rowLabel+" แล้ว","warn");
   renderRr();
 });
+
+/* === Phase 4C: Inline Camera Scanner inside #rrdlg (No Nested Modal) === */
+var RR_CAM={active:false,stream:null,timer:null,detector:null,canvas:null,ctx:null,lastCode:"",lastAt:0};
+var JSQR_PROMISE=null;
+function loadJsQr(){
+  if(typeof window.jsQR==="function")return Promise.resolve(window.jsQR);
+  if(JSQR_PROMISE)return JSQR_PROMISE;
+  JSQR_PROMISE=new Promise(function(resolve,reject){
+    var sc=document.createElement("script");
+    sc.src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";
+    sc.async=true;
+    sc.onload=function(){
+      if(typeof window.jsQR==="function")resolve(window.jsQR);
+      else{JSQR_PROMISE=null;reject(new Error("โหลดตัวอ่าน QR ไม่สำเร็จ"))}
+    };
+    sc.onerror=function(){JSQR_PROMISE=null;reject(new Error("โหลดตัวอ่าน QR ไม่สำเร็จ (ตรวจอินเทอร์เน็ต)"))};
+    document.head.appendChild(sc);
+  });
+  return JSQR_PROMISE;
+}
+function stopRrCam(){
+  RR_CAM.active=false;
+  if(RR_CAM.timer){clearTimeout(RR_CAM.timer);RR_CAM.timer=null}
+  if(RR_CAM.stream){
+    try{RR_CAM.stream.getTracks().forEach(function(t){t.stop()})}catch(e){}
+    RR_CAM.stream=null;
+  }
+  var vid=$("rr-cam-vid");
+  if(vid){try{vid.pause();vid.srcObject=null}catch(e){}}
+  if($("rr-cam-box"))$("rr-cam-box").classList.add("hide");
+  if($("rr-cam-btn"))$("rr-cam-btn").setAttribute("aria-pressed","false");
+}
+function onRrScanned(rawCode){
+  var code=String(rawCode||"").trim();
+  if(!code)return;
+  var now=Date.now();
+  if(code===RR_CAM.lastCode&&now-RR_CAM.lastAt<1500)return;
+  RR_CAM.lastCode=code;RR_CAM.lastAt=now;
+  var box=$("rr-cam-box");
+  if(box){box.classList.add("hit");setTimeout(function(){box.classList.remove("hit")},420)}
+  if($("rr-auto").checked){
+    processRrQuery(code,true);
+  }else{
+    $("rr-q").value=code;
+    renderRr();
+    setRrStatus("สแกนพบ: "+code+" — กดเลือกรายการด้านล่างเพื่อยืนยัน","");
+  }
+}
+async function rrCamTick(){
+  if(!RR_CAM.active)return;
+  var vid=$("rr-cam-vid");
+  try{
+    if(vid&&vid.readyState>=2&&vid.videoWidth>0){
+      if(RR_CAM.detector){
+        var codes=await RR_CAM.detector.detect(vid);
+        if(codes&&codes.length&&codes[0].rawValue)onRrScanned(codes[0].rawValue);
+      }else if(typeof window.jsQR==="function"){
+        if(!RR_CAM.canvas){RR_CAM.canvas=document.createElement("canvas");RR_CAM.ctx=RR_CAM.canvas.getContext("2d",{willReadFrequently:true})}
+        var w=Math.min(640,vid.videoWidth),h=Math.round(vid.videoHeight*(w/vid.videoWidth));
+        if(RR_CAM.canvas.width!==w||RR_CAM.canvas.height!==h){RR_CAM.canvas.width=w;RR_CAM.canvas.height=h}
+        RR_CAM.ctx.drawImage(vid,0,0,w,h);
+        var img=RR_CAM.ctx.getImageData(0,0,w,h);
+        var qr=window.jsQR(img.data,w,h,{inversionAttempts:"dontInvert"});
+        if(qr&&qr.data)onRrScanned(qr.data);
+      }
+    }
+  }catch(e){}
+  if(RR_CAM.active)RR_CAM.timer=setTimeout(rrCamTick,180);
+}
+async function startRrCam(){
+  if(RR_CAM.active){stopRrCam();return}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    setRrStatus("เบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง (ต้องใช้งานผ่าน HTTPS)","warn");
+    return;
+  }
+  $("rr-cam-box").classList.remove("hide");
+  $("rr-cam-btn").setAttribute("aria-pressed","true");
+  $("rr-cam-msg").textContent="กำลังเปิดกล้อง…";
+  try{
+    RR_CAM.detector=null;
+    if(typeof window.BarcodeDetector==="function"){
+      try{
+        RR_CAM.detector=new window.BarcodeDetector({formats:["qr_code","code_128","code_39","ean_13","ean_8","upc_a","upc_e","codabar","itf","data_matrix"]});
+      }catch(e){
+        RR_CAM.detector=new window.BarcodeDetector();
+      }
+    }else{
+      $("rr-cam-msg").textContent="กำลังโหลดตัวอ่าน QR…";
+      await loadJsQr();
+    }
+    var stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+    RR_CAM.stream=stream;
+    RR_CAM.active=true;
+    var vid=$("rr-cam-vid");
+    vid.srcObject=stream;
+    if(vid.play)await vid.play().catch(function(){});
+    $("rr-cam-msg").textContent=RR_CAM.detector?"กำลังสแกน QR / บาร์โค้ด…":"กำลังสแกน QR Code…";
+    rrCamTick();
+  }catch(e){
+    stopRrCam();
+    setRrStatus("เปิดกล้องไม่สำเร็จ: "+(e&&e.message?e.message:"กรุณาอนุญาตสิทธิ์กล้อง"),"warn");
+  }
+}
+$("rr-cam-btn").addEventListener("click",startRrCam);
+$("rr-cam-stop").addEventListener("click",stopRrCam);
 async function readPdf(buf){
   var L=window.pdfjsLib;if(!L)throw new Error("โหลดตัวอ่าน PDF ไม่สำเร็จ");
   L.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -3371,6 +3982,7 @@ $("thm").addEventListener("click",function(){var h=document.documentElement,d=h.
 $("dens").addEventListener("click",function(){var c=$("tw").classList.toggle("cmp");this.setAttribute("aria-pressed",c);this.textContent=c?"กระชับ":"ปกติ"});
 if(window.matchMedia&&matchMedia("(max-width:999px)").matches)$("sumd").open=false;
 loadHist();
+loadTemplates();
 loadSync();
 load();
 if(RAW.length){
