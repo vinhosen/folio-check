@@ -3,13 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' blob: https://cdn.sheetjs.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; media-src 'self' blob:; worker-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; child-src 'self' blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://api.github.com https://gist.githubusercontent.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://tessdata.projectnaptha.com blob: data:; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>FolioCheck — Checklist Workspace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" onerror="window.__nox=1"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" onerror="window.__nopdf=1"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" onerror="window.__noqr=1"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous" onerror="window.__nox=1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" onerror="window.__nopdf=1"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" integrity="sha384-mZT2gIty7ZDdOGkxfP6joZcYdMW1Jvj9dRlfpTmaJAKKXTqzygtB22k7FLe+KZC1" crossorigin="anonymous" onerror="window.__noqr=1"></script>
 <style>
 :root{
   --bg:#F7F6F2;
@@ -2211,13 +2212,13 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
     <button type="button" id="ocrx" class="dlg-x" aria-label="ปิดหน้าต่าง">✕</button>
   </div>
   <div class="sync-sec">
-    <p class="dp">ประมวลผลในเบราว์เซอร์ 100% ด้วย Tesseract.js (โหลดไลบรารีเฉพาะเมื่อกดใช้งานเท่านั้น)</p>
+    <p class="dp">ประมวลผลในเบราว์เซอร์ 100% ด้วย Tesseract.js (โหลดเอนจินและไฟล์ภาษาเฉพาะเมื่อใช้งานครั้งแรก แล้วเก็บแคชในเครื่อง)</p>
     <div class="ocr-ctrl">
       <span class="selw">
         <select id="ocr-lang" aria-label="ภาษาสำหรับ OCR">
-          <option value="tha+eng">ไทย + อังกฤษ (tha+eng)</option>
-          <option value="tha">ภาษาไทย (tha)</option>
-          <option value="eng">English (eng)</option>
+          <option value="tha+eng">ไทย + อังกฤษ (tha+eng · โหลดครั้งแรก ~4 MB)</option>
+          <option value="tha">ภาษาไทย (tha · โหลดครั้งแรก ~1 MB)</option>
+          <option value="eng">English (eng · โหลดครั้งแรก ~3 MB)</option>
         </select>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
       </span>
@@ -2247,12 +2248,22 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
 <script>
 var RAW=[],HR=0,LC=[],S={},F="all",KEY="att:v2",LIM=500,SHOWN=500,HY=[],BUSY=0,TOK=0,SH={},CUR="",ST={},T="",U="",C=[],HN={},D=[];
 var FILE_ID="",FNAME="",FEXT="",HIST=[],DEL={},SYNC={token:"",gistId:"",user:"",lastSyncAt:0},HKEY="att:hist:v1",DKEY="att:del:v1",SKEY="att:sync:v1",MAX_HIST=15,SYNC_TM=null,SYNC_BUSY=0,LAST_PULL=0;
-var WF_TPLS=[],TPL_DEL={},TKEY="att:tpl:v1",TDKEY="att:tdel:v1",MAX_TPL=30;
+var WF_TPLS=[],TPL_DEL={},TKEY="att:tpl:v1",TDKEY="att:tdel:v1",MAX_TPL=30,TOMBSTONE_TTL=90*86400000;
+function pruneTombstones(map,nowTs){
+  if(!map||typeof map!=="object")return false;
+  var cutoff=(nowTs||Date.now())-TOMBSTONE_TTL,pruned=false;
+  Object.keys(map).forEach(function(id){
+    var ts=+map[id];
+    if(!ts||isNaN(ts)||ts<cutoff){delete map[id];pruned=true}
+  });
+  return pruned;
+}
 function loadTemplates(){
   try{var t=rj(TKEY);if(Array.isArray(t))WF_TPLS=t.filter(function(x){return x&&x.id&&x.name&&Array.isArray(x.steps)&&x.steps.length}).slice(0,MAX_TPL)}catch(e){}
-  try{var d=rj(TDKEY);if(d&&typeof d==="object")TPL_DEL=d}catch(e){}
+  try{var d=rj(TDKEY);if(d&&typeof d==="object"&&!Array.isArray(d))TPL_DEL=d;pruneTombstones(TPL_DEL)}catch(e){}
 }
 function saveTemplates(){
+  pruneTombstones(TPL_DEL);
   try{localStorage.setItem(TKEY,JSON.stringify(WF_TPLS.slice(0,MAX_TPL)))}catch(e){}
   try{localStorage.setItem(TDKEY,JSON.stringify(TPL_DEL))}catch(e){}
 }
@@ -2526,8 +2537,14 @@ function render(){
 function extra(a,n){var p=n?Math.round(a*100/n):0;$("pct").textContent=p+"%";$("pb").style.width=p+"%";$("pbw").setAttribute("aria-valuenow",p);
   $("tn_a").textContent=n;$("tn_c").textContent=a;$("tn_u").textContent=n-a;$("done").classList.toggle("hide",!(n&&a===n))}
 function summary(){
-  var a=[],b=[];
-  D.forEach(function(r,k){(isRowDone(k)?a:b).push(lab(r,k))});
+  var a=[],b=[],partCnt=0,ts1Cnt=0;
+  var multi=isMultiWf(),s1Id=WF&&WF.steps&&WF.steps[0]?WF.steps[0].id:"step_1";
+  D.forEach(function(r,k){
+    var done=isRowDone(k);
+    (done?a:b).push(lab(r,k));
+    if(multi){if(!done&&isRowPartial(k))partCnt++}
+    else if(done){var rd=getRowData(k),so=rd&&rd.steps&&rd.steps[s1Id];if(so&&so.checked&&so.timestamp)ts1Cnt++}
+  });
   var li=function(l){return l.map(function(x){return"<li>"+esc(x)+"</li>"}).join("")};
   var n=D.length;
   $("lt").textContent=n;$("lc").textContent=a.length;$("lu").textContent=b.length;
@@ -2535,7 +2552,7 @@ function summary(){
   $("nc").textContent=a.length;$("nu").textContent=b.length;
   extra(a.length,n);$("sp").textContent=n?"("+(a.length*100/n).toFixed(1)+"% จาก "+n+" รายการ)":"";
   var ws=$("wf-sum-steps");
-  if(isMultiWf()&&n){
+  if(multi&&n){
     ws.classList.remove("hide");
     ws.innerHTML=WF.steps.map(function(st){
       var c=0;D.forEach(function(_,k){if(getStepChecked(k,st.id))c++});
@@ -2544,10 +2561,14 @@ function summary(){
   }else{ws.classList.add("hide");ws.innerHTML=""}
   $("lc2").innerHTML=li(a)||'<span class="dp">ยังไม่มี</span>';
   $("lu2").innerHTML=li(b)||'<span class="dp">เช็คครบทุกรายการแล้ว</span>';
-  renderInsights();
+  renderInsights(false,multi?partCnt:ts1Cnt);
 }
 
 /* === Phase 4A: Aside Rich Export (Excel / CSV / Print PDF) === */
+function sanitizeSheetCell(v){
+  var s=String(v==null?"":v);
+  return/^\s*[=+\-@\t\r]/.test(s)?"'"+s:s;
+}
 function buildExportRows(){
   var multi=isMultiWf();
   var hdr=["#"].concat(C.map(function(ci){return HN[ci]||("คอลัมน์ "+(ci+1))})).concat(["สถานะรวม"]);
@@ -2557,7 +2578,7 @@ function buildExportRows(){
     hdr.push("เวลาที่ตรวจสอบ");
   }
   hdr.push("แท็ก","หมายเหตุ");
-  var rows=[hdr];
+  var rows=[hdr.map(sanitizeSheetCell)];
   D.forEach(function(r,k){
     var rd=getRowData(k);
     var done=isRowDone(k),part=isRowPartial(k);
@@ -2568,7 +2589,7 @@ function buildExportRows(){
         var stObj=rd&&rd.steps&&rd.steps[st.id];
         var ok=!!(stObj&&stObj.checked);
         var ts=(ok&&stObj.timestamp)?fmtAbs(Date.parse(stObj.timestamp)):"";
-        line.push(ok?"✓":"-",ts);
+        line.push(ok?"✓":"✗",ts);
       });
     }else{
       var s1=WF&&WF.steps&&WF.steps[0]?WF.steps[0].id:"step_1";
@@ -2577,12 +2598,12 @@ function buildExportRows(){
     }
     var tag=(rd&&rd.statusTag&&rd.statusTag!=="normal")?(TAG_LABELS[rd.statusTag]||rd.statusTag):"";
     line.push(tag,(rd&&rd.note)||"");
-    rows.push(line);
+    rows.push(line.map(sanitizeSheetCell));
   });
   return rows;
 }
 function csvEscape(v){
-  var s=String(v==null?"":v);
+  var s=sanitizeSheetCell(v);
   return/[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s;
 }
 function exportBaseName(){
@@ -2703,9 +2724,15 @@ function computeInsights(nowTs){
   }
   return{tsCount:tsList.length,avgCycleMs:avgCycleMs,peakLabel:peakLabel,stuck:stuck,bottleneckStep:bottleneckStep};
 }
-function renderInsights(){
-  var body=$("ins-body"),cntEl=$("ins-cnt");
+function renderInsights(force,badgeCount){
+  var acc=$("ins-acc"),body=$("ins-body"),cntEl=$("ins-cnt");
   if(!body||!cntEl)return;
+  if(!force&&acc&&!acc.open){
+    if(badgeCount!=null)cntEl.textContent=badgeCount;
+    body.dataset.dirty="1";
+    return;
+  }
+  delete body.dataset.dirty;
   var multi=isMultiWf();
   var ins=computeInsights();
   cntEl.textContent=multi?ins.stuck.length:ins.tsCount;
@@ -2730,6 +2757,7 @@ function renderInsights(){
   }
   body.innerHTML=html;
 }
+if($("ins-acc"))$("ins-acc").addEventListener("toggle",function(){if(this.open)renderInsights(true)});
 function full(){SHOWN=LIM;build();if(!LC.length||LC.some(function(i){return C.indexOf(i)<0}))LC=autoLC();shopts();chips();render()}
 
 /* === Time Formatting & File History === */
@@ -2771,6 +2799,7 @@ function histMetrics(it){
   return{tot:tot,chk:chk,pct:tot?Math.round(chk*100/tot):0};
 }
 function saveHistStore(){
+  pruneTombstones(DEL);
   var list=HIST.slice(0,MAX_HIST);
   while(list.length){
     try{localStorage.setItem(HKEY,JSON.stringify(list));HIST=list;break}
@@ -2783,6 +2812,7 @@ function loadHist(){
   try{
     var h=rj(HKEY);if(Array.isArray(h))HIST=h.filter(function(x){return x&&x.id&&okData(x)}).map(function(x){return migrateLegacyState(x)});
     var d=rj(DKEY);if(d&&typeof d==="object"&&!Array.isArray(d))DEL=d;
+    pruneTombstones(DEL);
   }catch(e){}
 }
 function upsertHist(){
@@ -2940,17 +2970,22 @@ async function ghReq(path,opts){
   return res.json();
 }
 function buildSyncPayload(){
+  pruneTombstones(DEL);
+  pruneTombstones(TPL_DEL);
   return{v:1,updatedAt:Date.now(),activeId:FILE_ID||"",deleted:DEL,files:HIST.slice(0,MAX_HIST),templates:WF_TPLS.slice(0,MAX_TPL),tplDeleted:TPL_DEL};
 }
 function mergeRemote(remote){
   if(!remote||typeof remote!=="object")return false;
-  var changed=false,needPush=false;
+  var changed=false,needPush=false,nowTs=Date.now(),cutoff=nowTs-TOMBSTONE_TTL;
   var rDel=(remote.deleted&&typeof remote.deleted==="object")?remote.deleted:{};
+  var rDelStale=false;
   Object.keys(rDel).forEach(function(id){
+    var ts=+rDel[id];
+    if(!ts||isNaN(ts)||ts<cutoff)rDelStale=true;
     if(!DEL[id]||rDel[id]>DEL[id]){DEL[id]=rDel[id];changed=true}
   });
   Object.keys(DEL).forEach(function(id){
-    if(!rDel[id]||DEL[id]>rDel[id])needPush=true;
+    if(DEL[id]>=cutoff&&(!rDel[id]||DEL[id]>rDel[id]))needPush=true;
   });
   var map={},localMap={};
   HIST.forEach(function(it){if(it&&it.id){localMap[it.id]=it;map[it.id]=it}});
@@ -2970,16 +3005,21 @@ function mergeRemote(remote){
     var inRemote=rFiles.some(function(r){return r&&r.id===id});
     if(!inRemote)needPush=true;
   });
+  var activeDeleted=!!(FILE_ID&&(DEL[FILE_ID]||0)>0&&(DEL[FILE_ID]||0)>=(localMap[FILE_ID]?localMap[FILE_ID].updatedAt:0));
   var merged=Object.keys(map).map(function(k){return map[k]}).sort(function(a,b){return(b.updatedAt||0)-(a.updatedAt||0)}).slice(0,MAX_HIST);
   HIST=merged;
+  if(pruneTombstones(DEL,nowTs)&&rDelStale)needPush=true;
   saveHistStore();
   // Merge saved workflow templates via existing Gist payload
   var rTDel=(remote.tplDeleted&&typeof remote.tplDeleted==="object")?remote.tplDeleted:{};
+  var rTDelStale=false;
   Object.keys(rTDel).forEach(function(id){
+    var ts=+rTDel[id];
+    if(!ts||isNaN(ts)||ts<cutoff)rTDelStale=true;
     if(!TPL_DEL[id]||rTDel[id]>TPL_DEL[id]){TPL_DEL[id]=rTDel[id];changed=true}
   });
   Object.keys(TPL_DEL).forEach(function(id){
-    if(!rTDel[id]||TPL_DEL[id]>rTDel[id])needPush=true;
+    if(TPL_DEL[id]>=cutoff&&(!rTDel[id]||TPL_DEL[id]>rTDel[id]))needPush=true;
   });
   var tMap={},tLocMap={};
   WF_TPLS.forEach(function(t){if(t&&t.id){tLocMap[t.id]=t;tMap[t.id]=t}});
@@ -2999,12 +3039,12 @@ function mergeRemote(remote){
     if(!inRemote)needPush=true;
   });
   WF_TPLS=Object.keys(tMap).map(function(k){return tMap[k]}).sort(function(a,b){return(b.updatedAt||0)-(a.updatedAt||0)}).slice(0,MAX_TPL);
+  if(pruneTombstones(TPL_DEL,nowTs)&&rTDelStale)needPush=true;
   saveTemplates();
   if($("wfdlg")&&$("wfdlg").open&&typeof renderWfTemplates==="function")renderWfTemplates();
   // If active file was updated remotely, refresh workspace live
   if(FILE_ID){
-    var dtCur=DEL[FILE_ID]||0;
-    if(dtCur&&dtCur>=(localMap[FILE_ID]?localMap[FILE_ID].updatedAt:0)){
+    if(activeDeleted){
       SH={};ST={};CUR="";RAW=[];D=[];S={};LC=[];FILE_ID="";FNAME="";FEXT="";
       put(KEY+"s",{cur:"",st:{},fid:"",fname:"",fext:""});render();
     }else if(map[FILE_ID]&&(!localMap[FILE_ID]||(map[FILE_ID].updatedAt||0)>(localMap[FILE_ID].updatedAt||0))){
@@ -3532,7 +3572,7 @@ function processRrQuery(qRaw,fromCam){
 }
 $("rr-btn").addEventListener("click",openRrModal);
 $("rrx").addEventListener("click",function(){stopRrCam();$("rrdlg").close()});
-$("rrdlg").addEventListener("close",function(){stopRrCam()});
+$("rrdlg").addEventListener("close",function(){if(!$("rrdlg").open)stopRrCam()});
 $("rr-step").addEventListener("change",renderRr);
 $("rr-q").addEventListener("input",renderRr);
 $("rr-q").addEventListener("keydown",function(e){
@@ -3556,7 +3596,7 @@ $("rr-log").addEventListener("click",function(e){
 });
 
 /* === Phase 4C: Inline Camera Scanner inside #rrdlg (No Nested Modal) === */
-var RR_CAM={active:false,stream:null,timer:null,detector:null,canvas:null,ctx:null,lastCode:"",lastAt:0};
+var RR_CAM={active:false,starting:false,session:0,stream:null,timer:null,detector:null,errCount:0,canvas:null,ctx:null,lastCode:"",lastAt:0};
 var JSQR_PROMISE=null;
 function loadJsQr(){
   if(typeof window.jsQR==="function")return Promise.resolve(window.jsQR);
@@ -3564,6 +3604,8 @@ function loadJsQr(){
   JSQR_PROMISE=new Promise(function(resolve,reject){
     var sc=document.createElement("script");
     sc.src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";
+    sc.integrity="sha384-hStSInNIZ8ljtOVrmrgf7zdHMapaLBWoSnPTtF0nzsybp4+LuhDz6sHuEVpWIX8o";
+    sc.crossOrigin="anonymous";
     sc.async=true;
     sc.onload=function(){
       if(typeof window.jsQR==="function")resolve(window.jsQR);
@@ -3575,7 +3617,10 @@ function loadJsQr(){
   return JSQR_PROMISE;
 }
 function stopRrCam(){
+  RR_CAM.session++;
   RR_CAM.active=false;
+  RR_CAM.starting=false;
+  RR_CAM.errCount=0;
   if(RR_CAM.timer){clearTimeout(RR_CAM.timer);RR_CAM.timer=null}
   if(RR_CAM.stream){
     try{RR_CAM.stream.getTracks().forEach(function(t){t.stop()})}catch(e){}
@@ -3602,13 +3647,15 @@ function onRrScanned(rawCode){
     setRrStatus("สแกนพบ: "+code+" — กดเลือกรายการด้านล่างเพื่อยืนยัน","");
   }
 }
-async function rrCamTick(){
-  if(!RR_CAM.active)return;
+async function rrCamTick(sessionId){
+  if(!RR_CAM.active||sessionId!==RR_CAM.session||!$("rrdlg").open)return;
   var vid=$("rr-cam-vid");
   try{
     if(vid&&vid.readyState>=2&&vid.videoWidth>0){
       if(RR_CAM.detector){
         var codes=await RR_CAM.detector.detect(vid);
+        if(!RR_CAM.active||sessionId!==RR_CAM.session)return;
+        RR_CAM.errCount=0;
         if(codes&&codes.length&&codes[0].rawValue)onRrScanned(codes[0].rawValue);
       }else if(typeof window.jsQR==="function"){
         if(!RR_CAM.canvas){RR_CAM.canvas=document.createElement("canvas");RR_CAM.ctx=RR_CAM.canvas.getContext("2d",{willReadFrequently:true})}
@@ -3617,44 +3664,92 @@ async function rrCamTick(){
         RR_CAM.ctx.drawImage(vid,0,0,w,h);
         var img=RR_CAM.ctx.getImageData(0,0,w,h);
         var qr=window.jsQR(img.data,w,h,{inversionAttempts:"dontInvert"});
+        RR_CAM.errCount=0;
         if(qr&&qr.data)onRrScanned(qr.data);
       }
     }
-  }catch(e){}
-  if(RR_CAM.active)RR_CAM.timer=setTimeout(rrCamTick,180);
+  }catch(e){
+    RR_CAM.errCount++;
+    if(RR_CAM.errCount>=5&&RR_CAM.detector){
+      RR_CAM.detector=null;
+      RR_CAM.errCount=0;
+      $("rr-cam-msg").textContent="ตัวสแกนเบราว์เซอร์ขัดข้อง — กำลังสลับเป็นตัวอ่าน QR สำรอง…";
+      try{
+        await loadJsQr();
+        if(!RR_CAM.active||sessionId!==RR_CAM.session)return;
+        $("rr-cam-msg").textContent="กำลังสแกน QR Code (โหมดสำรอง)…";
+      }catch(e2){
+        if(RR_CAM.active&&sessionId===RR_CAM.session){
+          stopRrCam();
+          setRrStatus("ไม่สามารถสแกนด้วยกล้องได้: "+(e2&&e2.message?e2.message:"ตรวจอินเทอร์เน็ต"),"warn");
+        }
+        return;
+      }
+    }else if(RR_CAM.errCount>=10&&!RR_CAM.detector){
+      stopRrCam();
+      setRrStatus("ไม่สามารถอ่านภาพจากกล้องได้ กรุณาลองใหม่อีกครั้ง","warn");
+      return;
+    }
+  }
+  if(RR_CAM.active&&sessionId===RR_CAM.session){
+    RR_CAM.timer=setTimeout(function(){rrCamTick(sessionId)},180);
+  }
 }
 async function startRrCam(){
   if(RR_CAM.active){stopRrCam();return}
+  if(RR_CAM.starting)return;
   if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
     setRrStatus("เบราว์เซอร์นี้ไม่รองรับการเปิดกล้อง (ต้องใช้งานผ่าน HTTPS)","warn");
     return;
   }
+  var mySession=++RR_CAM.session;
+  RR_CAM.starting=true;
+  RR_CAM.errCount=0;
   $("rr-cam-box").classList.remove("hide");
   $("rr-cam-btn").setAttribute("aria-pressed","true");
   $("rr-cam-msg").textContent="กำลังเปิดกล้อง…";
   try{
+    var wantFmts=["qr_code","code_128","code_39","ean_13","ean_8","upc_a","upc_e","codabar","itf","data_matrix"];
     RR_CAM.detector=null;
     if(typeof window.BarcodeDetector==="function"){
       try{
-        RR_CAM.detector=new window.BarcodeDetector({formats:["qr_code","code_128","code_39","ean_13","ean_8","upc_a","upc_e","codabar","itf","data_matrix"]});
+        var sup=typeof window.BarcodeDetector.getSupportedFormats==="function"
+          ? await window.BarcodeDetector.getSupportedFormats()
+          : wantFmts;
+        if(mySession!==RR_CAM.session||!$("rrdlg").open)return;
+        if(Array.isArray(sup)&&sup.indexOf("qr_code")>-1){
+          var useFmts=wantFmts.filter(function(f){return sup.indexOf(f)>-1});
+          RR_CAM.detector=new window.BarcodeDetector(useFmts.length?{formats:useFmts}:undefined);
+        }
       }catch(e){
-        RR_CAM.detector=new window.BarcodeDetector();
+        RR_CAM.detector=null;
       }
-    }else{
+    }
+    if(!RR_CAM.detector){
       $("rr-cam-msg").textContent="กำลังโหลดตัวอ่าน QR…";
       await loadJsQr();
+      if(mySession!==RR_CAM.session||!$("rrdlg").open)return;
     }
     var stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+    if(mySession!==RR_CAM.session||!$("rrdlg").open){
+      try{stream.getTracks().forEach(function(t){t.stop()})}catch(e){}
+      return;
+    }
     RR_CAM.stream=stream;
     RR_CAM.active=true;
+    RR_CAM.starting=false;
     var vid=$("rr-cam-vid");
     vid.srcObject=stream;
-    if(vid.play)await vid.play().catch(function(){});
+    if(vid.play){try{var pr=vid.play();if(pr&&pr.catch)pr.catch(function(){})}catch(e){}}
     $("rr-cam-msg").textContent=RR_CAM.detector?"กำลังสแกน QR / บาร์โค้ด…":"กำลังสแกน QR Code…";
-    rrCamTick();
+    rrCamTick(mySession);
   }catch(e){
-    stopRrCam();
-    setRrStatus("เปิดกล้องไม่สำเร็จ: "+(e&&e.message?e.message:"กรุณาอนุญาตสิทธิ์กล้อง"),"warn");
+    if(mySession===RR_CAM.session){
+      stopRrCam();
+      setRrStatus("เปิดกล้องไม่สำเร็จ: "+(e&&e.message?e.message:"กรุณาอนุญาตสิทธิ์กล้อง"),"warn");
+    }
+  }finally{
+    if(mySession===RR_CAM.session)RR_CAM.starting=false;
   }
 }
 $("rr-cam-btn").addEventListener("click",startRrCam);
@@ -3662,7 +3757,7 @@ $("rr-cam-stop").addEventListener("click",stopRrCam);
 async function readPdf(buf){
   var L=window.pdfjsLib;if(!L)throw new Error("โหลดตัวอ่าน PDF ไม่สำเร็จ");
   L.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  var pdf=await L.getDocument({data:buf}).promise,out={};
+  var pdf=await L.getDocument({data:buf,isEvalSupported:false}).promise,out={};
   for(var p=1;p<=pdf.numPages;p++){
     var tc=await(await pdf.getPage(p)).getTextContent();
     var its=tc.items.filter(function(i){return i.str.trim()}).map(function(i){return{s:i.str.trim(),x:i.transform[4],y:i.transform[5],e:i.transform[4]+i.width}});
@@ -3901,7 +3996,9 @@ function loadTesseract(){
   if(OCR_LOAD_PROMISE)return OCR_LOAD_PROMISE;
   OCR_LOAD_PROMISE=new Promise(function(resolve,reject){
     var sc=document.createElement("script");
-    sc.src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+    sc.src="https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+    sc.integrity="sha384-GJqSu7vueQ9qN0E9yLPb3Wtpd7OrgK8KmYzC8T1IysG1bcvxvIO4qtYR/D3A991F";
+    sc.crossOrigin="anonymous";
     sc.async=true;
     sc.onload=function(){
       if(typeof window.Tesseract!=="undefined")resolve(window.Tesseract);
@@ -3920,6 +4017,13 @@ function ocrTextToRows(text){
   lines.forEach(function(l){out.push([l])});
   return out;
 }
+var OCR_STAGE_LABELS={
+  "loading tesseract core":"กำลังโหลดเอนจิน OCR…",
+  "initializing tesseract":"กำลังเตรียมตัวอ่าน OCR…",
+  "loading language traineddata":"กำลังดาวน์โหลดไฟล์ภาษา (ครั้งแรกอาจใช้เวลาสักครู่)…",
+  "initializing api":"กำลังตั้งค่าระบบอ่านข้อความ…",
+  "recognizing text":"กำลังอ่านข้อความจากภาพ…"
+};
 async function runOcr(file){
   if(!file)return;
   OCR_FILE_NAME=file.name.replace(/\.[^.]+$/,"");
@@ -3935,7 +4039,7 @@ async function runOcr(file){
     var res=await TLib.recognize(file,lang,{
       logger:function(m){
         if(!m)return;
-        if(m.status)$("ocr-st").textContent=m.status==="recognizing text"?"กำลังอ่านข้อความจากภาพ…":m.status;
+        if(m.status)$("ocr-st").textContent=OCR_STAGE_LABELS[m.status]||m.status;
         if(typeof m.progress==="number"){
           var p=Math.round(m.progress*100);
           $("ocr-pct").textContent=p+"%";
