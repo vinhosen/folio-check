@@ -1,4 +1,4 @@
-const CACHE_NAME = "foliocheck-pwa-v1";
+const CACHE_NAME = "foliocheck-pwa-v2";
 const PRECACHE_URLS = [
   "./",
   "./index.html",

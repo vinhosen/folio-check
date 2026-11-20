@@ -1620,6 +1620,51 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
   gap:8px;
   flex-wrap:wrap;
 }
+.ocr-opts{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  flex-wrap:wrap;
+  font-size:12.5px;
+  color:var(--t2);
+}
+.ocr-prev{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:8px 10px;
+  border:1px solid var(--bd);
+  border-radius:10px;
+  background:var(--bg);
+}
+.ocr-prev-img{
+  width:72px;
+  height:72px;
+  object-fit:contain;
+  border-radius:6px;
+  border:1px solid var(--bd);
+  background:#fff;
+  flex-shrink:0;
+}
+.ocr-prev-info{
+  min-width:0;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.ocr-prev-acts{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.ocr-prev-acts button{
+  height:28px;
+  min-height:28px;
+  padding:0 10px;
+  font-size:12px;
+}
 .ocr-prog{
   display:flex;
   flex-direction:column;
@@ -1872,7 +1917,7 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
       <button class="p" type="button">เลือกไฟล์</button>
       <input type="file" id="file" accept=".xlsx,.xls,.csv,.pdf" class="hide">
       <div class="fm"><span>XLSX</span><span>XLS</span><span>CSV</span><span>PDF</span></div>
-      <p class="dp drop-note">PDF ต้องมีข้อความที่เลือกได้ หากเป็นรูปภาพ/สแกน สามารถใช้ OCR ด้านล่างหรือวางรูปลงที่นี่ได้</p>
+      <p class="dp drop-note">รองรับทั้ง Excel, CSV, PDF ข้อความ และ PDF แบบสแกนเอกสาร (ระบบจะอ่านด้วย OCR ให้อัตโนมัติ) รวมถึงลากรูปภาพมาวางได้</p>
     </div>
     <div class="ocr-drop-row">
       <button id="ocr-btn" type="button" title="สแกนรายชื่อจากรูปภาพด้วย OCR ในเบราว์เซอร์ (โหลดเมื่อใช้งานเท่านั้น)">สแกนรูปภาพเป็นเช็คลิสต์ (OCR)</button>
@@ -2229,27 +2274,41 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
 
 <dialog id="ocrdlg" class="dlg-lg" aria-labelledby="ocr-title">
   <div class="dlg-hd">
-    <h3 id="ocr-title">สแกนรูปภาพเป็นเช็คลิสต์ (Client-Side OCR)</h3>
+    <h3 id="ocr-title">สแกนรูปภาพ / PDF เป็นเช็คลิสต์ (Client-Side OCR)</h3>
     <button type="button" id="ocrx" class="dlg-x" aria-label="ปิดหน้าต่าง">✕</button>
   </div>
   <div class="sync-sec">
-    <p class="dp">ประมวลผลในเบราว์เซอร์ 100% ด้วย Tesseract.js (โหลดเอนจินและไฟล์ภาษาเฉพาะเมื่อใช้งานครั้งแรก แล้วเก็บแคชในเครื่อง)</p>
+    <p class="dp">ประมวลผลในเบราว์เซอร์ 100% ด้วย Tesseract.js รองรับทั้งภาพถ่ายจากกล้อง รูปภาพ และไฟล์ PDF แบบสแกนเอกสาร</p>
     <div class="ocr-ctrl">
       <span class="selw">
         <select id="ocr-lang" aria-label="ภาษาสำหรับ OCR">
-          <option value="tha+eng">ไทย + อังกฤษ (tha+eng · โหลดครั้งแรก ~4 MB)</option>
-          <option value="tha">ภาษาไทย (tha · โหลดครั้งแรก ~1 MB)</option>
-          <option value="eng">English (eng · โหลดครั้งแรก ~3 MB)</option>
+          <option value="tha+eng">ไทย + อังกฤษ (tha+eng)</option>
+          <option value="tha">ภาษาไทยล้วน — แนะนำสำหรับรายชื่อไทย (tha)</option>
+          <option value="eng">English (eng)</option>
         </select>
         <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4 6 4 4 4-4"/></svg>
       </span>
       <button type="button" id="ocr-cam-btn" class="p" title="เปิดกล้องมือถือถ่ายภาพเพื่อสแกนข้อความ">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;margin-right:5px"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>ถ่ายรูปจากกล้อง
       </button>
-      <button type="button" id="ocr-pick-btn">เลือกรูปภาพ (.png/.jpg/.webp)</button>
+      <button type="button" id="ocr-pick-btn">เลือกรูป / PDF สแกน</button>
       <input type="file" id="ocr-cam-file" accept="image/*" capture="environment" class="hide">
-      <input type="file" id="ocr-file" accept="image/*" class="hide">
+      <input type="file" id="ocr-file" accept="image/*,.pdf" class="hide">
       <span id="ocr-fname" class="dp"></span>
+    </div>
+    <div class="ocr-opts">
+      <label class="wf-meta-chk"><input type="checkbox" id="ocr-enh" checked><span>ปรับความคมชัดภาพถ่ายอัตโนมัติ (ลดแสงเงา/ตัวเพี้ยน)</span></label>
+      <label class="wf-meta-chk"><input type="checkbox" id="ocr-best" checked><span>โหมดแม่นยำสูง (Best · แคชครั้งแรกครั้งเดียว)</span></label>
+    </div>
+    <div id="ocr-prev-wrap" class="ocr-prev hide">
+      <img id="ocr-prev-img" class="ocr-prev-img" alt="ตัวอย่างภาพที่ปรับความคมชัดแล้ว">
+      <div class="ocr-prev-info">
+        <span id="ocr-prev-meta" class="dp"></span>
+        <div class="ocr-prev-acts">
+          <button type="button" id="ocr-rot-btn" title="หมุนภาพ 90 องศาแล้วสแกนใหม่">หมุนภาพ 90°</button>
+          <button type="button" id="ocr-rerun-btn" title="สแกนไฟล์เดิมใหม่ตามภาษาและการตั้งค่าที่เลือก">สแกนใหม่</button>
+        </div>
+      </div>
     </div>
     <div id="ocr-prog" class="ocr-prog hide">
       <div style="display:flex;justify-content:space-between;gap:8px;font-size:12px">
@@ -2261,7 +2320,7 @@ tr.row.part:hover{background:color-mix(in srgb, var(--ac) 8%, transparent)}
     <div id="ocr-err" class="no"></div>
     <div>
       <label class="dp" for="ocr-text" style="display:block;margin-bottom:4px">ข้อความที่อ่านได้ (แก้ไขได้ 1 บรรทัด = 1 รายการ)</label>
-      <textarea id="ocr-text" class="ocr-txt" placeholder="เลือกรูปภาพเพื่อสแกน หรือวางข้อความรายชื่อที่นี่บรรทัดละ 1 รายการ..."></textarea>
+      <textarea id="ocr-text" class="ocr-txt" placeholder="ถ่ายรูป เลือกรูปภาพ/PDF สแกน หรือวางข้อความรายชื่อที่นี่บรรทัดละ 1 รายการ..."></textarea>
     </div>
     <div class="ocr-foot">
       <button type="button" id="ocr-clr">ล้างข้อความ</button>
@@ -3782,10 +3841,12 @@ $("rr-cam-stop").addEventListener("click",stopRrCam);
 async function readPdf(buf){
   var L=window.pdfjsLib;if(!L)throw new Error("โหลดตัวอ่าน PDF ไม่สำเร็จ");
   L.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  var pdf=await L.getDocument({data:buf,isEvalSupported:false}).promise,out={};
+  var pdf=await L.getDocument({data:buf,isEvalSupported:false}).promise,out={},meaningfulRows=0,totalChars=0;
   for(var p=1;p<=pdf.numPages;p++){
-    var tc=await(await pdf.getPage(p)).getTextContent();
+    var page=await pdf.getPage(p);
+    var tc=await page.getTextContent();
     var its=tc.items.filter(function(i){return i.str.trim()}).map(function(i){return{s:i.str.trim(),x:i.transform[4],y:i.transform[5],e:i.transform[4]+i.width}});
+    if(page.cleanup)try{page.cleanup()}catch(e){}
     if(!its.length)continue;
     its.sort(function(a,b){return b.y-a.y||a.x-b.x});
     var rows=[];
@@ -3794,10 +3855,21 @@ async function readPdf(buf){
       r.t.forEach(function(t){if(k&&t.x-k.e<8){k.s+=(t.x-k.e>1?" ":"")+t.s;k.e=t.e}else{k={s:t.s,x:t.x,e:t.e};c.push(k)}});return c});
     var xs=[];cs.forEach(function(c){c.forEach(function(k){xs.push(k.x)})});xs.sort(function(a,b){return a-b});
     var an=[];xs.forEach(function(x){if(!an.length||x-an[an.length-1]>12)an.push(x)});
-    out["หน้า "+p]=cs.map(function(c){var row=an.map(function(){return""});
+    var pageRows=cs.map(function(c){var row=an.map(function(){return""});
       c.forEach(function(k){var j=0;for(var i=0;i<an.length;i++)if(an[i]<=k.x+6)j=i;row[j]=row[j]?row[j]+" "+k.s:k.s});return row});
+    pageRows.forEach(function(r){
+      var joined=r.join(" ").trim();
+      if(!joined||/^(?:scanned\s+(?:with|by)|camscanner|adobe\s+scan)/i.test(joined))return;
+      meaningfulRows++;
+      totalChars+=joined.replace(/\s+/g,"").length;
+    });
+    out["หน้า "+p]=pageRows;
   }
-  if(!Object.keys(out).length)throw new Error("PDF นี้ไม่มีข้อความให้ดึง (น่าจะเป็นรูปสแกน)");
+  if(!Object.keys(out).length||meaningfulRows===0||(meaningfulRows<=pdf.numPages&&totalChars<6)){
+    var scErr=new Error("PDF นี้เป็นภาพสแกน (กำลังสลับไปใช้ OCR อัตโนมัติ)");
+    scErr.code="SCANNED_PDF";
+    throw scErr;
+  }
   return out;
 }
 var MAXB=50*1024*1024;
@@ -3807,6 +3879,11 @@ function isImageFile(f){
   if(!f)return false;
   var n=(f.name||"").toLowerCase();
   return/\.(png|jpe?g|gif|webp|bmp|heic)$/.test(n)||(f.type||"").indexOf("image/")===0;
+}
+function isPdfFile(f){
+  if(!f)return false;
+  var n=(f.name||"").toLowerCase();
+  return/\.pdf$/.test(n)||(f.type||"").toLowerCase()==="application/pdf";
 }
 function parseChecklistFile(f){
   return new Promise(function(resolve,reject){
@@ -3825,7 +3902,7 @@ function parseChecklistFile(f){
         wb.SheetNames.forEach(function(k,i){var m=wb.Workbook&&wb.Workbook.Sheets&&wb.Workbook.Sheets[i];if(m&&m.Hidden)return;
           o[k]=XLSX.utils.sheet_to_json(wb.Sheets[k],{header:1,defval:"",raw:false,dateNF:"dd/mm/yyyy"}).map(function(x){return x.map(cell)})})}
       resolve({sheets:o,name:f.name,ext:(f.name.split(".").pop()||"DATA").toUpperCase()});
-    }catch(e){reject(new Error(e.message||"อ่านไฟล์ไม่ได้ (ไฟล์อาจเสีย)"))}};
+    }catch(e){var ne=new Error(e&&e.message?e.message:"อ่านไฟล์ไม่ได้ (ไฟล์อาจเสีย)");if(e&&e.code)ne.code=e.code;reject(ne)}};
     r.readAsArrayBuffer(f);
   });
 }
@@ -3839,7 +3916,14 @@ function handle(f){
     setSheets(res.sheets,{name:res.name,ext:res.ext});busy(0);$("err").textContent="";
   }).catch(function(e){
     if(my!==TOK)return;
-    busy(0);fail(e.message||"อ่านไฟล์ไม่ได้");
+    busy(0);
+    if(e&&e.code==="SCANNED_PDF"){
+      $("err").textContent="";
+      say("ตรวจพบ PDF แบบสแกน — กำลังเปิดโหมด OCR อัตโนมัติ");
+      openOcrModal(f);
+      return;
+    }
+    fail(e.message||"อ่านไฟล์ไม่ได้");
   });
 }
 
@@ -3986,7 +4070,24 @@ $("diff-file").addEventListener("change",function(e){
     for(var i=0;i<Math.min(10,rows.length);i++){if(rows[i].filter(cell).length>1){hGuess=i;break}}
     $("diff-hist-sel").value="";
     loadDiffSource(res.name+" ("+firstSh+")",rows,hGuess);
-  }).catch(function(err){say(err.message||"อ่านไฟล์เทียบไม่ได้")});
+  }).catch(function(err){
+    if(err&&err.code==="SCANNED_PDF"){
+      say("ตรวจพบ PDF แบบสแกน — กำลังอ่านด้วย OCR เพื่อเปรียบเทียบ…");
+      ocrPdfToText(f,{
+        lang:$("ocr-lang").value||"tha+eng",
+        enhance:$("ocr-enh")?$("ocr-enh").checked:true,
+        useBest:$("ocr-best")?$("ocr-best").checked:true
+      }).then(function(out){
+        var rows=ocrTextToRows(out.text);
+        if(rows.length<=1){say("ไม่พบข้อความใน PDF สแกนนี้");return}
+        $("diff-hist-sel").value="";
+        loadDiffSource(f.name+" (OCR "+out.pages+" หน้า)",rows,0);
+        say("อ่าน PDF สแกน ("+(rows.length-1)+" รายการ) เพื่อเทียบเรียบร้อยแล้ว");
+      }).catch(function(e2){say(e2.message||"อ่าน PDF สแกนไม่สำเร็จ")});
+      return;
+    }
+    say(err.message||"อ่านไฟล์เทียบไม่ได้");
+  });
   this.value="";
 });
 $("diff-hist-sel").addEventListener("change",function(){
@@ -4014,8 +4115,8 @@ $("diff-copy").addEventListener("click",function(){
   try{navigator.clipboard.writeText(txt).then(function(){say("คัดลอกสรุปผลต่างแล้ว")},function(){say("คัดลอกไม่ได้")})}catch(e){say("คัดลอกไม่ได้")}
 });
 
-/* === Phase 3B: Client-Side OCR (Lazy-loaded Tesseract.js) === */
-var OCR_LOAD_PROMISE=null,OCR_FILE_NAME="";
+/* === Phase 3B: Client-Side OCR (Lazy-loaded Tesseract.js + Photo Enhancement + Scanned PDF OCR) === */
+var OCR_LOAD_PROMISE=null,OCR_FILE_NAME="",OCR_CUR_FILE=null,OCR_ROT=0,OCR_SESSION=0,OCR_ACTIVE_WORKER=null;
 function loadTesseract(){
   if(typeof window.Tesseract!=="undefined")return Promise.resolve(window.Tesseract);
   if(OCR_LOAD_PROMISE)return OCR_LOAD_PROMISE;
@@ -4034,13 +4135,190 @@ function loadTesseract(){
   });
   return OCR_LOAD_PROMISE;
 }
+function cleanOcrText(raw){
+  var lines=String(raw||"").replace(/\r\n?/g,"\n").split("\n");
+  var out=[];
+  var thaiCluster="(?:[\u0E40-\u0E44]?[\u0E01-\u0E2E][\u0E30-\u0E3A\u0E47-\u0E4E]*)";
+  var spacedThaiRe=new RegExp("(^|\\s)("+thaiCluster+"(?: "+thaiCluster+"){1,})(?=\\s|$)","g");
+  for(var i=0;i<lines.length;i++){
+    var s=lines[i];
+    if(s.normalize)try{s=s.normalize("NFC")}catch(e){}
+    s=s.replace(/[\u200B-\u200D\uFEFF]/g,"");
+    s=s.replace(/\u0E40\u0E40/g,"\u0E41");
+    s=s.replace(/\u0E4D([\u0E48-\u0E4B]?)\u0E32/g,"$1\u0E33");
+    s=s.replace(/[ \t]+([\u0E30-\u0E3A\u0E47-\u0E4E])/g,"$1");
+    s=s.replace(/([\u0E40-\u0E44])[ \t]+([\u0E01-\u0E2E])/g,"$1$2");
+    s=s.replace(spacedThaiRe,function(_,lead,seq){return lead+seq.replace(/ /g,"")});
+    s=s.replace(/[ \t]{2,}/g," ").trim();
+    if(!s)continue;
+    if(!/[\u0E00-\u0E7FA-Za-z0-9]/.test(s))continue;
+    out.push(s);
+  }
+  return out.join("\n");
+}
 function ocrTextToRows(text){
-  var lines=String(text||"").split(/\r?\n/).map(function(l){
+  var lines=String(text||"").split(/\r?\n/).filter(function(l){
+    return!/^\s*-{2,}\s*หน้า\s*\d+\s*-{2,}\s*$/.test(l);
+  }).map(function(l){
     return l.replace(/^\s*(?:[-*•]+|\[[ xX]?\])\s+/,"").trim();
   }).filter(Boolean);
   var out=[["รายการ"]];
   lines.forEach(function(l){out.push([l])});
   return out;
+}
+function preprocessCanvasForOcr(srcCanvas,enhance){
+  var w=srcCanvas.width,h=srcCanvas.height,pad=24;
+  var out=document.createElement("canvas");
+  out.width=w+pad*2;out.height=h+pad*2;
+  var octx=out.getContext("2d",{willReadFrequently:true});
+  octx.fillStyle="#FFFFFF";
+  octx.fillRect(0,0,out.width,out.height);
+  if(!enhance){
+    octx.drawImage(srcCanvas,pad,pad);
+    return out;
+  }
+  var sctx=srcCanvas.getContext("2d",{willReadFrequently:true});
+  var img=sctx.getImageData(0,0,w,h),d=img.data,n=w*h;
+  var gray=new Uint8Array(n),gHist=new Uint32Array(256);
+  for(var i=0,p=0;i<n;i++,p+=4){
+    var g=(d[p]*77+d[p+1]*150+d[p+2]*29)>>8;
+    gray[i]=g;gHist[g]++;
+  }
+  // Invert only if >75% of the image is dark (e.g. dark-mode screenshot)
+  var p75=0,acc=0,t75=n*0.75;
+  for(var b=0;b<256;b++){acc+=gHist[b];if(acc>=t75){p75=b;break}}
+  if(p75<110){for(var i2=0;i2<n;i2++)gray[i2]=255-gray[i2]}
+  // Flat-field illumination normalization to eliminate camera shadows & paper tint
+  var gCanvas=document.createElement("canvas");
+  gCanvas.width=w;gCanvas.height=h;
+  var gCtx=gCanvas.getContext("2d",{willReadFrequently:true});
+  var gImg=gCtx.createImageData(w,h),gd=gImg.data;
+  for(var i3=0,p3=0;i3<n;i3++,p3+=4){var v0=gray[i3];gd[p3]=gd[p3+1]=gd[p3+2]=v0;gd[p3+3]=255}
+  gCtx.putImageData(gImg,0,0);
+  var tiny=document.createElement("canvas");
+  tiny.width=Math.max(12,Math.round(w/28));tiny.height=Math.max(12,Math.round(h/28));
+  var tCtx=tiny.getContext("2d");
+  tCtx.imageSmoothingEnabled=true;
+  tCtx.drawImage(gCanvas,0,0,tiny.width,tiny.height);
+  var bgCanvas=document.createElement("canvas");
+  bgCanvas.width=w;bgCanvas.height=h;
+  var bgCtx=bgCanvas.getContext("2d",{willReadFrequently:true});
+  bgCtx.imageSmoothingEnabled=true;
+  bgCtx.drawImage(tiny,0,0,w,h);
+  var bgData=bgCtx.getImageData(0,0,w,h).data;
+  var norm=new Uint8Array(n),nHist=new Uint32Array(256);
+  for(var i4=0,p4=0;i4<n;i4++,p4+=4){
+    var bg=bgData[p4];if(bg<40)bg=40;
+    var nv=Math.round((gray[i4]/bg)*245);
+    if(nv>255)nv=255;
+    norm[i4]=nv;nHist[nv]++;
+  }
+  // Percentile contrast stretch while keeping grayscale anti-aliasing for Thai tone marks
+  var lo=0,hi=255,c2=0,tLo=n*0.02,tHi=n*0.88;
+  for(var b1=0;b1<256;b1++){c2+=nHist[b1];if(c2>=tLo){lo=b1;break}}
+  c2=0;
+  for(var b2=0;b2<256;b2++){c2+=nHist[b2];if(c2>=tHi){hi=b2;break}}
+  if(lo>165)lo=165;
+  if(hi<lo+35)hi=Math.min(255,lo+35);
+  var span=hi-lo;
+  var outImg=octx.createImageData(w,h),od=outImg.data;
+  for(var i5=0,p5=0;i5<n;i5++,p5+=4){
+    var sv=Math.round((norm[i5]-lo)*255/span);
+    if(sv<0)sv=0;
+    else if(sv>228)sv=255;
+    else if(sv<180)sv=Math.round(sv*0.85);
+    od[p5]=od[p5+1]=od[p5+2]=sv;od[p5+3]=255;
+  }
+  octx.putImageData(outImg,pad,pad);
+  gCanvas.width=0;gCanvas.height=0;
+  tiny.width=0;tiny.height=0;
+  bgCanvas.width=0;bgCanvas.height=0;
+  return out;
+}
+function makePreviewThumb(canvas){
+  try{
+    var tw=Math.min(240,canvas.width),th=Math.max(1,Math.round(canvas.height*(tw/canvas.width)));
+    var c=document.createElement("canvas");c.width=tw;c.height=th;
+    c.getContext("2d").drawImage(canvas,0,0,tw,th);
+    var url=c.toDataURL("image/jpeg",0.8);
+    c.width=0;c.height=0;
+    return url;
+  }catch(e){return""}
+}
+async function decodeImageSource(file){
+  if(typeof createImageBitmap==="function"){
+    try{
+      var bmp=await createImageBitmap(file,{imageOrientation:"from-image"});
+      return{img:bmp,w:bmp.width,h:bmp.height,close:function(){try{bmp.close()}catch(e){}}};
+    }catch(e){}
+  }
+  return new Promise(function(resolve,reject){
+    var url=URL.createObjectURL(file),im=new Image();
+    im.onload=function(){
+      resolve({img:im,w:im.naturalWidth||im.width,h:im.naturalHeight||im.height,close:function(){URL.revokeObjectURL(url)}});
+    };
+    im.onerror=function(){URL.revokeObjectURL(url);reject(new Error("decode_failed"))};
+    im.src=url;
+  });
+}
+async function prepareImageCanvasForOcr(file,rotDeg,enhance){
+  var dec=null;
+  try{
+    dec=await decodeImageSource(file);
+    var sw=dec.w,sh=dec.h;
+    if(!sw||!sh)return null;
+    var maxSide=Math.max(sw,sh),scale=1;
+    if(maxSide>2000)scale=2000/maxSide;
+    else if(maxSide<1200)scale=Math.min(2,2000/maxSide);
+    var dw=Math.max(1,Math.round(sw*scale)),dh=Math.max(1,Math.round(sh*scale));
+    var rot=((rotDeg||0)%360+360)%360;
+    var work=document.createElement("canvas");
+    work.width=(rot===90||rot===270)?dh:dw;
+    work.height=(rot===90||rot===270)?dw:dh;
+    var ctx=work.getContext("2d",{willReadFrequently:true});
+    ctx.fillStyle="#FFFFFF";
+    ctx.fillRect(0,0,work.width,work.height);
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality="high";
+    ctx.translate(work.width/2,work.height/2);
+    if(rot)ctx.rotate(rot*Math.PI/180);
+    ctx.drawImage(dec.img,-dw/2,-dh/2,dw,dh);
+    var finalCanvas=preprocessCanvasForOcr(work,enhance);
+    work.width=0;work.height=0;
+    return{canvas:finalCanvas,previewUrl:makePreviewThumb(finalCanvas)};
+  }catch(e){
+    return null;
+  }finally{
+    if(dec&&dec.close)dec.close();
+  }
+}
+async function createOcrWorker(TLib,lang,useBest,logger){
+  var oem=(TLib.OEM&&TLib.OEM.LSTM_ONLY!=null)?TLib.OEM.LSTM_ONLY:1;
+  var w=null;
+  if(useBest){
+    try{
+      w=await TLib.createWorker(lang,oem,{
+        langPath:"https://tessdata.projectnaptha.com/4.0.0_best",
+        cachePath:"fc-best-v1",
+        logger:logger
+      });
+    }catch(e){
+      if(logger)logger({status:"ใช้โมเดลมาตรฐานแทน (โหลดโมเดล Best ไม่สำเร็จ)…",progress:0});
+      w=null;
+    }
+  }
+  if(!w)w=await TLib.createWorker(lang,oem,{logger:logger});
+  if(w&&typeof w.setParameters==="function"){
+    try{await w.setParameters({preserve_interword_spaces:"1",user_defined_dpi:"300"})}catch(e){}
+  }
+  return w;
+}
+function stopActiveOcr(){
+  OCR_SESSION++;
+  if(OCR_ACTIVE_WORKER){
+    var w=OCR_ACTIVE_WORKER;OCR_ACTIVE_WORKER=null;
+    try{w.terminate()}catch(e){}
+  }
 }
 var OCR_STAGE_LABELS={
   "loading tesseract core":"กำลังโหลดเอนจิน OCR…",
@@ -4049,48 +4327,180 @@ var OCR_STAGE_LABELS={
   "initializing api":"กำลังตั้งค่าระบบอ่านข้อความ…",
   "recognizing text":"กำลังอ่านข้อความจากภาพ…"
 };
-async function runOcr(file){
+function setOcrProgress(st,pct){
+  $("ocr-prog").classList.remove("hide");
+  if(st!=null)$("ocr-st").textContent=st;
+  if(typeof pct==="number"){
+    var p=Math.max(0,Math.min(100,Math.round(pct)));
+    $("ocr-pct").textContent=p+"%";
+    $("ocr-bar").style.width=p+"%";
+  }
+}
+function showOcrPreview(url,metaText){
+  if(url){
+    $("ocr-prev-img").src=url;
+    $("ocr-prev-meta").textContent=metaText||"";
+    $("ocr-prev-wrap").classList.remove("hide");
+  }else{
+    $("ocr-prev-wrap").classList.add("hide");
+    $("ocr-prev-img").removeAttribute("src");
+  }
+}
+async function ocrPdfToText(file,opts){
+  opts=opts||{};
+  var L=window.pdfjsLib;if(!L)throw new Error("โหลดตัวอ่าน PDF ไม่สำเร็จ");
+  L.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  var buf=await file.arrayBuffer();
+  var pdf=await L.getDocument({data:new Uint8Array(buf),isEvalSupported:false}).promise;
+  var totalPages=pdf.numPages||0;
+  if(!totalPages)throw new Error("ไม่พบหน้าเอกสารในไฟล์ PDF นี้");
+  var TLib=await loadTesseract();
+  var lang=opts.lang||"tha+eng";
+  var enhance=opts.enhance!==false;
+  var useBest=opts.useBest!==false;
+  var rot=((opts.rot||0)%360+360)%360;
+  var sessionId=opts.sessionId;
+  var onProgress=opts.onProgress||function(){};
+  var onPreview=opts.onPreview||function(){};
+  var worker=null,curPageIdx=0;
+  var logger=function(m){
+    if(!m||(sessionId!=null&&sessionId!==OCR_SESSION))return;
+    if(m.status==="recognizing text"&&typeof m.progress==="number"){
+      var overall=((curPageIdx+m.progress)/totalPages)*100;
+      onProgress("กำลังสแกน PDF หน้า "+(curPageIdx+1)+"/"+totalPages+"…",overall);
+    }else if(m.status){
+      onProgress(OCR_STAGE_LABELS[m.status]||m.status,typeof m.progress==="number"?m.progress*100:null);
+    }
+  };
+  try{
+    if(typeof TLib.createWorker==="function"){
+      onProgress("กำลังเตรียมเอนจิน OCR สำหรับ PDF ("+totalPages+" หน้า)…",0);
+      worker=await createOcrWorker(TLib,lang,useBest,logger);
+      if(sessionId!=null){
+        if(sessionId!==OCR_SESSION){try{await worker.terminate()}catch(e){}return null}
+        OCR_ACTIVE_WORKER=worker;
+      }
+    }
+    var pageTexts=[];
+    for(var p=1;p<=totalPages;p++){
+      if(sessionId!=null&&sessionId!==OCR_SESSION)return null;
+      curPageIdx=p-1;
+      onProgress("กำลังแปลงหน้า PDF "+p+"/"+totalPages+" เป็นภาพ…",((p-1)/totalPages)*100);
+      var page=await pdf.getPage(p);
+      var vp1=page.getViewport({scale:1,rotation:rot});
+      var scale=Math.min(3,Math.max(1.5,2000/Math.max(1,vp1.width,vp1.height)));
+      var vp=page.getViewport({scale:scale,rotation:rot});
+      var rawC=document.createElement("canvas");
+      rawC.width=Math.max(1,Math.round(vp.width));
+      rawC.height=Math.max(1,Math.round(vp.height));
+      var rctx=rawC.getContext("2d",{willReadFrequently:true});
+      rctx.fillStyle="#FFFFFF";
+      rctx.fillRect(0,0,rawC.width,rawC.height);
+      await page.render({canvasContext:rctx,viewport:vp}).promise;
+      if(page.cleanup)try{page.cleanup()}catch(e){}
+      if(sessionId!=null&&sessionId!==OCR_SESSION){rawC.width=0;rawC.height=0;return null}
+      var procC=preprocessCanvasForOcr(rawC,enhance);
+      rawC.width=0;rawC.height=0;
+      if(p===1)onPreview(makePreviewThumb(procC),"PDF สแกน "+totalPages+" หน้า · หมุน "+rot+"°");
+      onProgress("กำลังสแกน PDF หน้า "+p+"/"+totalPages+"…",((p-0.5)/totalPages)*100);
+      var res=worker
+        ? await worker.recognize(procC)
+        : await TLib.recognize(procC,lang,{logger:logger});
+      procC.width=0;procC.height=0;
+      if(sessionId!=null&&sessionId!==OCR_SESSION)return null;
+      var cleaned=cleanOcrText((res&&res.data&&res.data.text)||"");
+      if(cleaned)pageTexts.push(totalPages>1?("--- หน้า "+p+" ---\n"+cleaned):cleaned);
+    }
+    return{text:pageTexts.join("\n"),pages:totalPages};
+  }finally{
+    if(worker){
+      if(OCR_ACTIVE_WORKER===worker)OCR_ACTIVE_WORKER=null;
+      try{await worker.terminate()}catch(e){}
+    }
+    if(pdf&&pdf.destroy)try{pdf.destroy()}catch(e){}
+  }
+}
+async function runOcr(file,opts){
   if(!file)return;
+  opts=opts||{};
+  stopActiveOcr();
+  var mySession=OCR_SESSION;
+  OCR_CUR_FILE=file;
+  if(!opts.keepRot)OCR_ROT=0;
   OCR_FILE_NAME=file.name.replace(/\.[^.]+$/,"");
   $("ocr-fname").textContent=file.name;
   $("ocr-err").textContent="";
-  $("ocr-prog").classList.remove("hide");
-  $("ocr-st").textContent="กำลังโหลดเอนจิน OCR (ครั้งแรกอาจใช้เวลาสักครู่)…";
-  $("ocr-pct").textContent="0%";
-  $("ocr-bar").style.width="0%";
+  setOcrProgress("กำลังเตรียมภาพและเอนจิน OCR (ครั้งแรกอาจใช้เวลาสักครู่)…",0);
+  var lang=$("ocr-lang").value||"tha+eng";
+  var enhance=$("ocr-enh")?$("ocr-enh").checked:true;
+  var useBest=$("ocr-best")?$("ocr-best").checked:true;
   try{
+    if(isPdfFile(file)){
+      var pdfOut=await ocrPdfToText(file,{
+        lang:lang,enhance:enhance,useBest:useBest,rot:OCR_ROT,sessionId:mySession,
+        onProgress:function(st,pct){if(mySession===OCR_SESSION)setOcrProgress(st,pct)},
+        onPreview:function(url,meta){if(mySession===OCR_SESSION)showOcrPreview(url,meta)}
+      });
+      if(!pdfOut||mySession!==OCR_SESSION)return;
+      $("ocr-text").value=pdfOut.text;
+      setOcrProgress("อ่าน PDF สแกนครบ "+pdfOut.pages+" หน้าแล้ว",100);
+      return;
+    }
+    var prep=await prepareImageCanvasForOcr(file,OCR_ROT,enhance);
+    if(mySession!==OCR_SESSION){if(prep&&prep.canvas){prep.canvas.width=0;prep.canvas.height=0}return}
+    if(prep&&prep.previewUrl){
+      showOcrPreview(prep.previewUrl,(enhance?"ปรับคมชัดแล้ว":"ภาพต้นฉบับ")+" · หมุน "+OCR_ROT+"°");
+    }else{
+      showOcrPreview("","");
+    }
     var TLib=await loadTesseract();
-    var lang=$("ocr-lang").value||"tha+eng";
-    var res=await TLib.recognize(file,lang,{
-      logger:function(m){
-        if(!m)return;
-        if(m.status)$("ocr-st").textContent=OCR_STAGE_LABELS[m.status]||m.status;
-        if(typeof m.progress==="number"){
-          var p=Math.round(m.progress*100);
-          $("ocr-pct").textContent=p+"%";
-          $("ocr-bar").style.width=p+"%";
-        }
+    if(mySession!==OCR_SESSION){if(prep&&prep.canvas){prep.canvas.width=0;prep.canvas.height=0}return}
+    var logger=function(m){
+      if(!m||mySession!==OCR_SESSION)return;
+      if(m.status)$("ocr-st").textContent=OCR_STAGE_LABELS[m.status]||m.status;
+      if(typeof m.progress==="number")setOcrProgress(null,m.progress*100);
+    };
+    var inputSrc=(prep&&prep.canvas)?prep.canvas:file;
+    var res=null,worker=null;
+    try{
+      if(typeof TLib.createWorker==="function"){
+        worker=await createOcrWorker(TLib,lang,useBest,logger);
+        if(mySession!==OCR_SESSION){try{await worker.terminate()}catch(e){}return}
+        OCR_ACTIVE_WORKER=worker;
+        res=await worker.recognize(inputSrc);
+      }else{
+        res=await TLib.recognize(inputSrc,lang,{logger:logger});
       }
-    });
+    }finally{
+      if(prep&&prep.canvas){prep.canvas.width=0;prep.canvas.height=0}
+      if(worker){
+        if(OCR_ACTIVE_WORKER===worker)OCR_ACTIVE_WORKER=null;
+        try{await worker.terminate()}catch(e){}
+      }
+    }
+    if(mySession!==OCR_SESSION)return;
     var txt=(res&&res.data&&res.data.text)||"";
-    $("ocr-text").value=txt.split(/\r?\n/).map(function(x){return x.trim()}).filter(Boolean).join("\n");
-    $("ocr-st").textContent="อ่านข้อความเสร็จสิ้น";
-    $("ocr-pct").textContent="100%";
-    $("ocr-bar").style.width="100%";
+    $("ocr-text").value=cleanOcrText(txt);
+    setOcrProgress("อ่านข้อความเสร็จสิ้น",100);
   }catch(e){
-    $("ocr-err").textContent=e.message||"ไม่สามารถอ่านข้อความจากรูปภาพได้";
+    if(mySession!==OCR_SESSION)return;
+    $("ocr-err").textContent=(e&&e.message)||"ไม่สามารถอ่านข้อความจากไฟล์ได้";
     $("ocr-prog").classList.add("hide");
   }
 }
 function openOcrModal(file){
   $("ocr-err").textContent="";
-  if(!file){$("ocr-prog").classList.add("hide")}
-  if($("ocrdlg").showModal)$("ocrdlg").showModal();
+  if(!file){
+    $("ocr-prog").classList.add("hide");
+    if(!OCR_CUR_FILE)showOcrPreview("","");
+  }
+  if($("ocrdlg").showModal&&!$("ocrdlg").open)$("ocrdlg").showModal();
   if(file)runOcr(file);
 }
 $("ocr-btn").addEventListener("click",function(){openOcrModal(null)});
 $("ocr-snap-btn").addEventListener("click",function(){$("ocr-cam-file").click()});
-$("ocrx").addEventListener("click",function(){$("ocrdlg").close()});
+$("ocrx").addEventListener("click",function(){stopActiveOcr();$("ocrdlg").close()});
+$("ocrdlg").addEventListener("close",function(){if(!$("ocrdlg").open)stopActiveOcr()});
 $("ocr-cam-btn").addEventListener("click",function(){$("ocr-cam-file").click()});
 $("ocr-cam-file").addEventListener("change",function(e){
   var f=e.target.files[0];
@@ -4101,12 +4511,23 @@ $("ocr-cam-file").addEventListener("change",function(e){
 });
 $("ocr-pick-btn").addEventListener("click",function(){$("ocr-file").click()});
 $("ocr-file").addEventListener("change",function(e){if(e.target.files[0])runOcr(e.target.files[0]);this.value=""});
+$("ocr-rot-btn").addEventListener("click",function(){
+  if(!OCR_CUR_FILE)return;
+  OCR_ROT=(OCR_ROT+90)%360;
+  runOcr(OCR_CUR_FILE,{keepRot:true});
+});
+$("ocr-rerun-btn").addEventListener("click",function(){
+  if(!OCR_CUR_FILE)return;
+  runOcr(OCR_CUR_FILE,{keepRot:true});
+});
 $("ocr-clr").addEventListener("click",function(){$("ocr-text").value="";$("ocr-err").textContent=""});
 $("ocr-make").addEventListener("click",function(){
   var rows=ocrTextToRows($("ocr-text").value);
-  if(rows.length<=1){$("ocr-err").textContent="กรุณาสแกนรูปภาพหรือพิมพ์ข้อความอย่างน้อย 1 บรรทัด";return}
+  if(rows.length<=1){$("ocr-err").textContent="กรุณาสแกนรูปภาพ/PDF หรือพิมพ์ข้อความอย่างน้อย 1 บรรทัด";return}
+  stopActiveOcr();
   $("ocrdlg").close();
-  setSheets({"OCR":rows},{name:(OCR_FILE_NAME||"OCR_Scan")+".ocr",ext:"OCR"});
+  var isPdf=OCR_CUR_FILE&&isPdfFile(OCR_CUR_FILE);
+  setSheets({"OCR":rows},{name:(OCR_FILE_NAME||"OCR_Scan")+(isPdf?".pdf":".ocr"),ext:isPdf?"PDF":"OCR"});
   say("สร้างเช็คลิสต์จากผล OCR ("+(rows.length-1)+" รายการ) แล้ว");
 });
 $("drop").addEventListener("click",function(){$("file").click()});
